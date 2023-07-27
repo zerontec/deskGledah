@@ -1,0 +1,1 @@
+export { default as PosA } from './PosA';

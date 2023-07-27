@@ -1,0 +1,1 @@
+export { default as TableAccountPayable } from './TableAccountPayable';
