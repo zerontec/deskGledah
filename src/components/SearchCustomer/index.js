@@ -1,0 +1,1 @@
+export { default as SearchCustomer } from './SearchCustomer';
