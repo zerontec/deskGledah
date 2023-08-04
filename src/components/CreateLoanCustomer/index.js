@@ -1,0 +1,1 @@
+export { default as CreateLoanCustomer } from './CreateLoanCustomer';
