@@ -79,33 +79,44 @@ const [selectedInvoices, setSelectedinvoices] = useState(null)
 const formatAmountB = (amount) => numeral(amount).format('0,0.00');
   
 
+useEffect(()=> {
 
+  dispatch(getAllInvoices())
+  dispatch(getAllNotas());
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      // Llamada a la acción getAllInvoices y getAllNotas con manejo de errores
-      await dispatch(getAllInvoices());
-      await dispatch(getAllNotas());
-    } catch (error) {
-      console.error('Error fetching invoices and notes:', error);
+}, [dispatch])
+
+// useEffect(() => {
+//   const fetchData = async () => {
+//     try {
+//       // Llamada a la acción getAllInvoices y getAllNotas con manejo de errores
+//       await dispatch(getAllInvoices());
+//       await dispatch(getAllNotas());
+//     } catch (error) {
+//       console.error('Error fetching invoices and notes:', error);
       
-      if (error.response && error.response.status === 404) {
-        const errorMessage = error.response.data.message;
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: errorMessage,
-        });
-      } else {
-        console.error('No hay datos que mostrar:', error);
-      }
+//       if (error.response && error.response.status === 404) {
+//         const errorMessage = error.response.data.message;
+//         Swal.fire({
+//           icon: 'error',
+//           title: 'Error',
+//           text: errorMessage,
+//         });
+//       } else {
+//         console.error('No hay datos que mostrar:', error);
+//       }
       
-    }
-  };
+//     }
+//   };
 
-  fetchData();
-}, [dispatch]);
+//   fetchData();
+// }, [dispatch]);
+
+const invoices = useSelector((state) => state.invoices);
+
+
+
+
 
   const invoice = useSelector((state) => state.invoice);
   const creditNotes = useSelector((state) => state.notasc);
@@ -151,13 +162,20 @@ const generatePDF = () => {
   // eslint-disable-next-line new-cap
   const doc = new jsPDF();
 
+    // Agregar el membrete al PDF
+    const companyName = 'Galeria Amar, C.A';
+    const companyAddress = 'Av Antonio Paez San Felix ';
+    doc.text(companyName, 20, 10);
+    doc.text(companyAddress, 20, 18);
+  
+
   // Agregar el número de factura
   doc.setFontSize(16);
-  doc.text(`Número de Factura: ${invoiceNumber}`, 20, 20);
+  doc.text(`Número de Factura: ${invoiceNumber}`, 20, 28);
 
   // Agregar la fecha de la factura
   doc.setFontSize(12);
-  doc.text(`Fecha de Factura: ${fDateTime(createdAt)}`, 20, 30);
+  doc.text(`Fecha de Factura: ${fDateTime(createdAt)}`, 20, 35);
 
   // Agregar los datos generales de la factura
   doc.setFontSize(12);
@@ -202,7 +220,7 @@ const generatePDF = () => {
   doc.setFontSize(12);
   metodoPago.forEach((metodo, index) => {
     doc.text(`Método ${index + 1}: ${metodo.method}`, 20, y + index * 10);
-    doc.text(`Monto: ${metodo.amount.toString()}`, 60, y + index * 10);
+    doc.text(`Monto: ${metodo.amount.toFixed(2)}`, 60, y + index * 10);
   });
 
   // Guardar el documento PDF
@@ -264,12 +282,12 @@ const generatePDF = () => {
         <h3>Lista de Productos:</h3>
         <ul>
           {selectedInvoices?.productoFactura.map((product) => (
-            <li key={product.barcode}>
-              <strong>Código: </strong> {product.barcode}
+            <li key={product?.barcode}>
+              <strong>Código: </strong> {product?.barcode}
               <br />
-              <strong>Producto: </strong> {capitalizeFirstLetter(product.name)}
+              <strong>Producto: </strong> {capitalizeFirstLetter(product?.name)}
               <br />
-              <strong>Cantidad: </strong> {product.quantity}
+              <strong>Cantidad: </strong> {product?.quantity}
               <br />
               <strong>Precio sin Iva: </strong>{' '}
               {product.preProductoUndSinIva.toFixed(2)}
@@ -298,7 +316,7 @@ const generatePDF = () => {
               {capitalizeFirstLetter(metodo?.method)}
               <br />
               <strong>Monto: </strong>
-              {formatAmountB(metodo?.amount)}
+              {formatAmountB(metodo?.amount.toFixed(2))}
               <br />
             </li>
           ))}
@@ -337,13 +355,13 @@ const generatePDF = () => {
   
   
         <TextField
-          label="Buscar Facturas"
+          label="Buscar Facturas po Numero"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <Button variant="contained" onClick={handleSearch}>
+        {/* <Button variant="contained" onClick={handleSearch}>
           Buscar
-        </Button>
+        </Button> */}
        
   
         <TableContainer component={Paper}>
@@ -368,7 +386,7 @@ const generatePDF = () => {
               {Array.isArray(invoice?.invoices) && invoice?.invoices.length > 0 ? (
         invoice?.invoices
           .filter((item) =>
-            item.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase())
+            item?.invoiceNumber?.toLowerCase().includes(searchTerm.toLowerCase())
           )
           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
           .map((item) => {

@@ -21,7 +21,11 @@ import { Checkbox } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import {Link} from 'react-router-dom'
-import { fDate } from '../../../utils/formatTime';
+import { jsPDF } from "jspdf";
+
+
+
+import { fDateTime } from '../../../utils/formatTime';
 import { deleteDevolution, getAllDevolution, updateDevolution } from '../../../redux/modules/devolucionV';
 
 
@@ -109,7 +113,7 @@ const Devolutions = () => {
 
 
 
-
+	fDateTime()
 
 
 
@@ -125,34 +129,6 @@ const Devolutions = () => {
 	};
 
 
-	// const handleDeleteMultipleClick = () => {
-
-	// 	Swal.fire({
-	// 		  title: "Estas Seguro",
-	// 		  text: "No podras revertir esta operacion !",
-	// 		  icon: "advertencia",
-	// 		  showCancelButton: true,
-	// 		  confirmButtonColor: "#3085d6",
-	// 		  cancelButtonColor: "#d33",
-	// 		  confirmButtonText: "Si, Borrar!",
-	// 		}).then((result) => {
-	// 		  if (result.isConfirmed) {
-	// 	const seleccion = { ids: selectedProducts };
-	
-	
-	// 	dispatch(deleteMultiplyProductsD(seleccion));
-	// 	setSelectedProducts([]);
-	// 	Swal.fire("Los productos han sido borrado!");
-		
-	// 	setTimeout(() => {
-	// 	  window.location.reload();
-	// 	}, 500);
-	// 	} else {
-	// 	Swal.fire("Los productos  Estan Seguro !");
-	// 	}
-	//   });
-	
-	//   };
 	
 
 
@@ -260,11 +236,77 @@ const Devolutions = () => {
 	
 	  const isDeleteButtonDisabled = selectedProducts.length === 0;
 
- fDate();
+//  fDate();
  function capitalizeFirstLetter(text) {
 	if (!text) return '';
 	return text.charAt(0).toUpperCase() + text.slice(1);
   }
+
+  const generatePDF = () => {
+	if (!selectedProduct) {
+	  return;
+	}
+  
+	const {productoD,total,customerData,fechaVentaF, fechaDevolucion,motivo, invoiceNumber } = selectedProduct;
+  
+	if (!Array.isArray(productoD)) {
+		console.error('productoD no es un array válido');
+		return;
+	  }
+	// Crear un nuevo documento PDF
+	// eslint-disable-next-line new-cap
+	const doc = new jsPDF();
+  
+	// Agregar el número de factura
+	doc.setFontSize(16);
+	doc.text(`Número de Factura: ${invoiceNumber}`, 20, 20);
+  
+	// Agregar la fecha de la factura
+	doc.setFontSize(12);
+	doc.text(`Fecha de Factura: ${fDateTime(fechaVentaF)}`, 20, 30);
+	doc.text(`Fecha de Devolucion: ${fDateTime(fechaDevolucion)}`, 20, 40);
+  
+  
+	// Agregar los datos generales de la factura
+	doc.setFontSize(12);
+
+	doc.text(`Cliente: ${customerData.name}`, 20, 60);
+	doc.text(`Cédula o Rif: ${customerData.identification}`, 20, 70);
+	doc.text(`Motivo: ${motivo}`, 20, 80);
+	
+  
+  
+	// Agregar la lista de productos
+	doc.setFontSize(14);
+	doc.text('Lista de Productos:', 20, 110);
+  
+	let y = 120;
+	doc.setFontSize(12);
+	doc.text('Código', 20, y);
+	doc.text('Producto', 60, y);
+	doc.text('Cantidad', 120, y);
+	
+  
+	y += 10;
+	productoD.forEach((devolution) => {
+	  doc.text(devolution.barcode, 20, y);
+	//   doc.text(devolution.name, 60, y);
+	  doc.text(devolution.quantity, 120, y);
+	  
+	  y += 10;
+	});
+  
+	// Agregar los totales
+	doc.setFontSize(12);
+	doc.text(`Total Producto devolucion: ${total.toString()}`, 20, y + 20);
+
+  
+	// Guardar el documento PDF
+	doc.save('Devolucion.pdf');
+  };
+  
+
+
 
 
 	  return (
@@ -295,10 +337,10 @@ const Devolutions = () => {
 					<strong> Numnero Factura de Venta:</strong> {selectedProduct.invoiceNumber}
 				  </p>
 				  <p>
-				  <strong>Fecha de Venta:</strong> {fDate(selectedProduct.fechaVentaF)}
+				  <strong>Fecha de Venta:</strong> {fDateTime(selectedProduct.fechaVentaF)}
 				</p>
 				  <p>
-				  <strong>Fecha Devolucion:</strong> {fDate(selectedProduct.fechaDevolucion)}
+				  <strong>Fecha Devolucion:</strong> {fDateTime(selectedProduct.fechaDevolucion)}
 				</p>
 			
 				<p>
@@ -323,13 +365,13 @@ const Devolutions = () => {
 
 				  <h3> Productos Devueltos:</h3>
     <ul>
-      {selectedProduct.productoD.map((devolutions) => (
+      {selectedProduct?.productoD.map((devolutions) => (
         <li key={devolutions.barcode}>
-           <strong>Código :  </strong> {devolutions.barcode}<br />
-           <strong>Producto: </strong> {devolutions.name}<br />
+           <strong>Código :  </strong> {devolutions?.barcode}<br />
+           <strong>Producto: </strong> {devolutions?.name}<br />
           
          
-          <strong>Cantidad:  </strong> {devolutions.quantity}<br />
+          <strong>Cantidad:  </strong> {devolutions?.quantity}<br />
            <br />
         </li>
       ))}
@@ -337,10 +379,14 @@ const Devolutions = () => {
 	<p>
 					<strong>Total devolucion:</strong> {selectedProduct.total}
 				  </p> 
-				  
+		
 				  <Button variant="contained" onClick={() => setSelectedProduct(null)}>
 					Cerrar
 				  </Button>
+
+				  <Button variant="contained" onClick={generatePDF} style={{marginLeft:10, backgroundColor:'red'}}>
+          Generar PDF
+        </Button>
 				</>
 			  )}
 			</Box>
@@ -479,7 +525,7 @@ const Devolutions = () => {
 					  onChange={() => handleToggleSelect(items.id)}
 					/>
 						  <TableCell align="left"> {items.numeroDevolucion}</TableCell>
-						  <TableCell align="left"> {fDate(items.fechaDevolucion)}</TableCell>
+						  <TableCell align="left"> {fDateTime(items.fechaDevolucion)}</TableCell>
 						  <TableCell align="left"> {items.invoiceNumber}</TableCell>
 						  <TableCell align="left"> {capitalizeFirstLetter(items.motivo)}</TableCell>
 						  <TableCell align="left"> {items.total}</TableCell>
@@ -502,9 +548,8 @@ const Devolutions = () => {
 	
 							<TableCell className="tableCell">
 							  
-							  <div className="deleteButton" id={items.id} onClick={() => deleteHandler(items)}>
-								<Button>Borrar</Button>
-							  </div>
+								<Button variant='contained' style={{backgroundColor:"red", color:"white"}}   id={items.id} onClick={() => deleteHandler(items)}>Borrar</Button>
+							
 							</TableCell>
 						  </>
 	
