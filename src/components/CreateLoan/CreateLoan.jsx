@@ -7,7 +7,8 @@ import Box from '@mui/material/Box';
 import Swal from 'sweetalert2';
 
 import { Button, TextField, Alert } from '@mui/material';
-import { createLoans } from '../../redux/modules/loan';
+import { createLoans, getAllLoans, } from '../../redux/modules/loan';
+import { getAllPayment } from '../../redux/modules/payments';
 
 const FormContainer = styled.form`
   display: flex;
@@ -95,7 +96,6 @@ const CreateLoan = () => {
 
 
 
-
   //   const [productList, setProductList] = useState([]);
   
 	//   const handleProductChange = (index, event) => {
@@ -116,6 +116,14 @@ const CreateLoan = () => {
 
 	const dispatch = useDispatch();
   
+
+	useEffect(()=>{
+		dispatch(getAllLoans())
+		dispatch(getAllPayment())
+	}, [dispatch])
+	
+
+
 	const handleInputChange = (event) => {
 	  const { name, value } = event.target;
 	  setLoanData((prevData) => ({ ...prevData, [name]: value }));
@@ -154,7 +162,8 @@ const CreateLoan = () => {
 		  .then((response) => {
 			setLoading(false);
 			Swal.fire("Prestamo creado con éxito!", "", "success");
-			window.location.reload();
+			dispatch(getAllLoans())
+		
 			setFormInfo({
 			  codigoSeller: "",
 			  amount: "",
@@ -177,9 +186,9 @@ const CreateLoan = () => {
 	
 	return (
 	  <>
-		<hr />
+		
 		<Button variant="contained" onClick={() => setSelectButton()}>
-			Crear Prestamo
+			Crear Prestamo Empleado
 		  </Button>
 		  <Modal open={selectButton !== null} onClose={() => setSelectButton(null)}>
 		  <Box
