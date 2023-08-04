@@ -69,9 +69,9 @@ export const createDevolution = (formInfo) => async (dispatch) => {
     });
     return response.data;
   } catch (error) {
-    if (error.response && error.response.status === 409) {
+    if (error.response && error.response.status === 400) {
       throw new Error({
-        message: "El código ya existe. Ingrese otro."
+        message: "El Producto no existe en la factura."
       });
     }
     throw error;

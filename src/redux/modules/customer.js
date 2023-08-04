@@ -16,7 +16,7 @@ const CUSTOMER_ERROR = 'CUSTOMER_ERROR'
 const GET_CUSTOMER ='GET_CUSTOMER'
 const UPDATE_CUSTOMER='UPDATE_CUSTOMER'
 const DELETE_CUSTOMER= 'DELETE_CUSTOMER'
-
+const GET_CUSTOMER_DEBT ='GET_CUSTOMER_DEBT'
 export const fetchCustomersRequest = () => ({
   type: FETCH_CUSTOMERS_REQUEST,
 });
@@ -150,6 +150,26 @@ export const deleteCustomer = (id) => async (dispatch) => {
 
 
 
+export const getSellerDebt =({id})=> async(dispatch)=>{
+
+  try{
+
+    const resp =  await axios.get(`${API_URL_D}api/customer/customer/${id}/debt`,{ headers: authHeader() });
+    dispatch({
+      type: GET_CUSTOMER_DEBT,
+      payload: resp.data,
+    });
+    return resp.data
+  } catch (err) {
+    return err.response;
+  }
+
+
+
+
+
+
+}
 
 export const initialState = {
 
@@ -197,7 +217,13 @@ export default function customerReducer(state = initialState, action) {
           error: null,
 
       }
-
+      case GET_CUSTOMER_DEBT:
+        return{
+      
+          ...state,
+          info:action.payload
+      
+        }
 
       case CREATE_CUSTOMER_ERROR:
         return {

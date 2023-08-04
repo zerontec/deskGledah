@@ -18,7 +18,7 @@ const CREATE_CUENTA_SUCCESS = 'CREATE_CUENTA_SUCCESS';
 const CREATE_CUENTA_ERROR = 'CREATE_CUENTA_ERROR';
 const  UPDATE_CUENTA =' UPDATE_CUENTA'
 const DELETE_CUENTA='DELETE_CUENTA'
-
+const CREATE_PAYMENT_CXC = 'CREATE_PAYMENT_CXC'
 
 
 
@@ -102,6 +102,26 @@ export const updateCuenta = (id, data) => async (dispatch) => {
 
 
 
+  export const createAbonocxc = (data) => async (dispatch) => {
+    try {
+      const response = await axios.post(`${API_URL_D}api/account-receivable/create-pay`, data, { headers: authHeader() });
+      dispatch({
+        type: CREATE_PAYMENT_CXC,
+        payload: response.data,
+      });
+      return response.data;
+      // Aquí podrías enviar una notificación de éxito al usuario
+    } catch (error) {
+      if (error.response && error.response.status) {
+        throw new Error('No se puedo crear el abono');
+      }
+      console.error(error);
+      throw error;
+      // Aquí podrías enviar una notificación de error al usuario
+    }
+  };
+
+
 
 
   export const deleteCuenta = (id) => async (dispatch) => {
@@ -160,7 +180,11 @@ export default function cuentasxcReducer(state = initialState, action) {
         cuentas: null,
       };
 
-
+      case CREATE_PAYMENT_CXC:
+        return {
+          ...state,
+          payables: action.payload,
+        };
      
 
     default:
