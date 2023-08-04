@@ -135,8 +135,11 @@ const Customer = () => {
 	
 		return errors;
 	  }
-
-
+    useEffect(() => {
+      dispatch(getAllCustomer());
+    }, [dispatch]);
+  
+ 
 
 	  const handleChange = (event) => {
 		const { name, value } = event.target;
@@ -159,7 +162,6 @@ const Customer = () => {
 	  const handleSubmitEdit = (e) => {
 		if (
 		  selectedUserEdit.name &&
-		  
 		  selectedUserEdit.identification &&
 		  selectedUserEdit.address 
 		 
@@ -170,11 +172,11 @@ const Customer = () => {
 			id: selectedUserId,
 		  };
 		  dispatch(updateCustomer(selectedUserId, data));
-		  Swal.fire('¨Usero Editado con Exito  !', 'You clicked the button!', 'success');
-		  dispatch(getAllCustomer());
+		  Swal.fire('¨Usuario Editado con Exito  !', 'You clicked the button!', 'success');
+		  dispatch(getAllCustomer())
 	
 		  handleCloseModal();
-		  //   getAllAnalysis();
+		 
 		} else {
 		  Swal.fire({
 			icon: 'error',
@@ -193,8 +195,8 @@ const Customer = () => {
 		  .then((response) => {
 			setLoading(false);
 			Swal.fire('Cliente creado con éxito!', '', 'success');
-			window.location.reload();
-	
+			// window.location.reload();
+      dispatch(getAllCustomer());
 			setFormInfo({
 			 
 			  name: '',
@@ -202,7 +204,7 @@ const Customer = () => {
 			  address: ''
 			  
 			});
-	
+     
 			setSelectButton(null);
 			if (response.error) {
 			  setMessageError(response.error);
@@ -216,9 +218,6 @@ const Customer = () => {
 		  });
 	  };
 	
-	  useEffect(() => {
-		dispatch(getAllCustomer());
-	  }, [dispatch]);
 	
 	//   const handleSelectAllClick = (event) => {
 	// 	if (event.target.checked) {
@@ -246,11 +245,7 @@ const Customer = () => {
 		setSelected(newSelected);
 	  };
 	
-	  // const handleEditClick = (event, user) => {
-	  //   setEditMode(true);
-	  //   setEditData(user);
 	
-	  // };
 	
 	  const [selectedUserId, setSelectedUserId] = useState(null);
 	  const [open, setOpen] = useState(false);
@@ -266,6 +261,8 @@ const Customer = () => {
 		});
 		setOpen(true);
 	  };
+
+
 	
 	  const [selectedUserEdit, setSelectedUserEdit] = useState({
 		name: '',
@@ -308,10 +305,10 @@ const Customer = () => {
 		  if (result.isConfirmed) {
 			dispatch(deleteCustomer(id));
 			Swal.fire('El usuario ha sido borrado!');
-	
-			setTimeout(() => {
-			  window.location.reload();
-			}, 500);
+	dispatch(getAllCustomer())
+			// setTimeout(() => {
+			//   window.location.reload();
+			// }, 500);
 		  } else {
 			Swal.fire('El usuario  Esta Seguro !');
 		  }
