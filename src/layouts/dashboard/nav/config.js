@@ -1,12 +1,21 @@
 
 
 // component
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BadgeIcon from '@mui/icons-material/Badge';
+import GroupIcon from '@mui/icons-material/Group';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import PersonIcon from '@mui/icons-material/Person';
 import SvgColor from '../../../components/svg-color';
 
 
 // ----------------------------------------------------------------------
 
-const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
+const icon = (name) => <SvgColor src={`../assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
 
 
 const navConfig = [
@@ -15,12 +24,12 @@ const navConfig = [
   {
     title: 'dashboard',
     path: '/dashboard/app',
-    icon: icon('ic_analytics'),
+    icon: <DashboardIcon/>
   },
   {
     title: 'Administracion',
     path: '/dashboard/Administracion',
-    icon: icon('ic_analytics'),
+    icon: <AdminPanelSettingsIcon/>
     
   },
   // {
@@ -32,32 +41,38 @@ const navConfig = [
   {
     title: 'facturacion',
     path: '/dashboard/facturacionA',
-    icon: icon('ic_cart'),
+    icon: <PointOfSaleIcon/>
   },
   {
     title: 'compras',
     path: '/dashboard/compras',
-    icon: icon('ic_cart'),
+    icon: <ShoppingCartIcon/>
+  },
+
+  {
+    title: 'Carga Productos',
+    path: '/dashboard/cargar-productos',
+    icon: <DriveFolderUploadIcon/>,
   },
 {
 
 title: 'usuarios',
 path:'/dashboard/usuarios',
-icon: icon('ic_user'),
+icon: <PersonIcon/>
 
 },
 {
 
   title: 'Empleados',
   path:'/dashboard/vendedores',
-  icon: icon('ic_user'),
+  icon: <BadgeIcon/>,
   
   },
   {
 
     title: 'clientes',
     path:'/dashboard/clientes',
-    icon: icon('ic_user'),
+    icon: <GroupIcon/>,
     
     },
 
@@ -65,7 +80,7 @@ icon: icon('ic_user'),
 
       title: 'gastos',
       path:'/dashboard/gastos',
-      icon: icon('ic_money'),
+      icon: <AccountBalanceWalletIcon/>,
       
       },
   
