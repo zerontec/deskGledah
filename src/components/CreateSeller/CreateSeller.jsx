@@ -8,7 +8,7 @@ import {io} from 'socket.io-client';
 import Swal from "sweetalert2";
 import validator from 'validator';
 import { Button, TextField, Alert } from '@mui/material';
-import { createSellers } from '../../redux/modules/seller';
+import { createSellers, getAllSeller } from '../../redux/modules/seller';
 
 
 
@@ -59,22 +59,6 @@ const CreateSeller = () => {
 	const { message } = useSelector((state) => state);
 
 
-	// useEffect(() => {
-	// 	const socket = io('http://localhost:5040'); // Reemplaza la URL con la del servidor de WebSocket
-	
-	// 	// Escucha el evento 'new_product' del canal
-	// 	socket.on('new_product', (data) => {
-	// 	  console.log('Se ha creado un nuevo producto:', data);
-	// 	  // Realiza las acciones necesarias con la notificación recibida, por ejemplo, actualiza la lista de productos en tiempo real
-		
-		
-	// 	});
-	
-	// 	// Retorna una función de limpieza para cerrar la conexión al desmontar el componente
-	// 	return () => {
-	// 	  socket.disconnect();
-	// 	};
-	//   }, []);
 
 
 const dispatch = useDispatch();
@@ -114,6 +98,10 @@ const dispatch = useDispatch();
 	return errors;
   };
   
+  useEffect(() => {
+	dispatch(getAllSeller());
+  }, [dispatch]);
+
 
 
 
@@ -132,6 +120,7 @@ const dispatch = useDispatch();
    .then((response)=>{
 	setLoading(false);
 	Swal.fire("Empleado creado con éxito!", "", "success");
+	dispatch(getAllSeller());
 	setSellerData({
 		
 		codigo:'',
@@ -175,8 +164,7 @@ const dispatch = useDispatch();
 
 
 		<>
-		
-	<hr/>
+
 		  {/* <Button variant="contained" onClick={() => setSelectButton()}>
 		Agregar Empleado
 		  </Button> */}

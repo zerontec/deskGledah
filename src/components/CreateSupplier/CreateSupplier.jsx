@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "@mui/material/Modal";
@@ -6,7 +6,7 @@ import Box from "@mui/material/Box";
 import Swal from "sweetalert2";
 import validator from 'validator';
 import { Button, TextField, Alert } from '@mui/material';
-import { createSuppliers } from '../../redux/modules/supplier';
+import { createSuppliers, getAllSupplier } from '../../redux/modules/supplier';
 
 
 
@@ -58,8 +58,13 @@ const CreateSupplier = () => {
 
 
 
-
 const dispatch = useDispatch();
+
+useEffect(() => {
+	// Llamada a la API para obtener los datos de los pacientes y almacenarlos en el estado del componente.
+	dispatch(getAllSupplier())
+  }, [dispatch]);
+
 
 
 
@@ -110,6 +115,7 @@ const dispatch = useDispatch();
    .then((response)=>{
 	setLoading(false);
 	Swal.fire("Proveedor creado con éxito!", "", "success");
+	dispatch(getAllSupplier())
 	setSupplierData({
 		name: '',
 		rif: '',
