@@ -148,20 +148,20 @@ fDateTime()
 			  </Typography>
 			  <Typography variant="body1">
 				
-				<strong>Nombre: {empleado.vendedores.name}</strong> 
+				<strong>Nombre: {empleado?.vendedores?.name}</strong> 
 			  </Typography>
 			  <Typography variant="body1">
 				
-				<strong>Cédula o Rif: {empleado.vendedores.identification}</strong> 
+				<strong>Cédula o Rif: {empleado?.vendedores?.identification}</strong> 
 			  </Typography>
 			 
 			  <Typography variant="body1">
 				
-				<strong>Direccion: {empleado.vendedores.address}</strong> 
+				<strong>Direccion: {empleado?.vendedores?.address}</strong> 
 			  </Typography>
 
 			  <Typography variant="body1">
-				<strong>Fecha de Registro: {fDateTime(empleado.vendedores.createdAt)}</strong> 
+				<strong>Fecha de Registro: {fDateTime(empleado?.vendedores?.createdAt)}</strong> 
 			  </Typography>
 
           <Typography variant="body1">

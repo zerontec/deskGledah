@@ -722,7 +722,7 @@ const Purchases = () => {
             <TextField
               label="Código"
               variant="outlined"
-              value={formValuesP.barcode || manualProductData.barcode || ''}
+              value={formValuesP.barcode || manualProductData.barcode.toUpperCase() || ''}
               onChange={(event) =>
                 setManualProductData({
                   ...manualProductData,

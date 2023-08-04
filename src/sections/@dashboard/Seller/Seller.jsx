@@ -184,6 +184,11 @@ const Seller = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(getAllSeller());
+  }, [dispatch]);
+
+
   const handleSubmitEdit = (e) => {
     if (
       selectedUserEdit.name &&
@@ -218,41 +223,10 @@ const Seller = () => {
   const handlePrintClick = () => {
     window.print();
   };
-
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setLoading(true);
-    dispatch(createSellers(formInfo))
-      .then((response) => {
-        setLoading(false);
-        Swal.fire('Vendedor creado con éxito!', '', 'success');
-        window.location.reload();
-
-        setFormInfo({
-          codigo: '',
-          name: '',
-          identification: '',
-          address: '',
-          telf: '',
-        });
-
-        setSelectButton(null);
-        if (response.error) {
-          setMessageError(response.error);
-        }
-      })
-      .catch((error) => {
-        setLoading(false);
-        setSelectButton(null);
-        setMessageError(error.message);
-        Swal.fire(error.message);
-      });
-  };
-
   useEffect(() => {
     dispatch(getAllSeller());
   }, [dispatch]);
+
 
 
   const handleChangePage = (event, newPage) => {
@@ -355,10 +329,10 @@ const Seller = () => {
       if (result.isConfirmed) {
         dispatch(deleteSeller(id));
         Swal.fire('El usuario ha sido borrado!');
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+dispatch(getAllSeller())
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 500);
       } else {
         Swal.fire('El usuario  Esta Seguro !');
       }
