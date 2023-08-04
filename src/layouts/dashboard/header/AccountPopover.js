@@ -34,6 +34,13 @@ export default function AccountPopover() {
 
   const usuario = useSelector((state) => state.auth.user);
 
+  const handleMenuItemClick = (event) => {
+    // Agrega esta línea para cerrar la ventana emergente al hacer clic en una opción
+    handleClose();
+  };
+
+
+
   useEffect(() => {
     if (usuario?.roles?.includes('ROLE_ADMIN')) {
       setRoleShow('Administrador');
@@ -104,7 +111,7 @@ export default function AccountPopover() {
             </MenuItem>
           ))} */}
           <Link to={`/dashboard/perfil-usuario/${usuario?.id}`} style={{ textDecoration: 'none' }}>
-            <MenuItem sx={{ m: 1 }}>
+          <MenuItem sx={{ m: 1 }} onClick={handleMenuItemClick}>
               Perfil
             </MenuItem>
           </Link>
