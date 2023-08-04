@@ -35,7 +35,10 @@ const [messageError, setMessageError] = useState({});
  
   
   
-  
+  function capitalizeFirstLetter(text) {
+    if (!text) return '';
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  }
   
   
   
@@ -131,19 +134,19 @@ const [messageError, setMessageError] = useState({});
 	  <TextField
         name="barcode"
         label="Código "
-        value={newProduct.barcode}
+        value={newProduct.barcode.toUpperCase()}
         onChange={handleInputChange}
       />
       <TextField
         name="name"
         label="Producto"
-        value={newProduct.name}
+        value={capitalizeFirstLetter(newProduct.name)}
         onChange={handleInputChange}
       />
          <TextField
         name="description"
         label="Descripcion"
-        value={newProduct.description}
+        value={capitalizeFirstLetter(newProduct.description)}
         onChange={handleInputChange}
       />
    

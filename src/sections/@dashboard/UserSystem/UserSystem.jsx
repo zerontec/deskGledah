@@ -29,10 +29,15 @@ import {
 import { Link } from 'react-router-dom';
 import { Icon as Iconify } from '@iconify/react';
 import { useDispatch, useSelector } from 'react-redux';
+
+
 import {createUser, getAllUsers, deleteUser, updateUser, deleteMultiplyUser } from '../../../redux/modules/user';
 import sentenceCase from '../../../utils/sentenceCase';
 
+
+
 import { FloatingButtonComponent } from '../../../components/FloatingButtonComponent';
+
 
 
 
@@ -169,6 +174,14 @@ const UserSystem = () => {
       
       };
       
+  
+      useEffect(() => {
+        dispatch(getAllUsers());
+        }, [dispatch]);
+      
+      
+      
+
 
       const handleSubmitEdit = (e) => {
         if (
@@ -194,7 +207,7 @@ const UserSystem = () => {
           dispatch(getAllUsers());
           
           handleCloseModal();
-        //   getAllAnalysis();
+      
           
         } else {
           Swal.fire({
@@ -215,7 +228,7 @@ const UserSystem = () => {
         .then((response) => {
           setLoading(false);
           Swal.fire("Usuario creado con éxito!", "", "success");
-          window.location.reload();
+          dispatch(getAllUsers());
          
           setFormInfo({
             username: "",
@@ -245,6 +258,8 @@ const UserSystem = () => {
     dispatch(getAllUsers());
   }, [dispatch]);
 
+
+  
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = users.usuarios.users.map((user) => user.id);
@@ -341,10 +356,10 @@ const UserSystem = () => {
 		  if (result.isConfirmed) {
     dispatch(deleteUser(id));
     Swal.fire("El usuario ha sido borrado!");
-	
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
+    dispatch(getAllUsers());
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 500);
     } else {
     Swal.fire("El usuario  Esta Seguro !");
     }
@@ -371,10 +386,10 @@ const UserSystem = () => {
     dispatch(deleteMultiplyUser(seleccion));
     setSelected([]);
     Swal.fire("los usuarios ha sido borrado!");
-	
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
+	  dispatch(getAllUsers());
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 500);
     } else {
     Swal.fire("los usuarios  Estan Seguro !");
     }

@@ -175,10 +175,8 @@ const handleEditClick = (supplier) => {
 	  if (result.isConfirmed) {
 		dispatch(deleteSuppliert(items.id));
 		Swal.fire("El Proveedor ha sido borrado!");
-
-		setTimeout(() => {
-		  window.location.reload();
-		}, 500);
+		dispatch(getAllSupplier());
+		
 	  } else {
 		Swal.fire("El Proveedor Esta Seguro !");
 	  }
