@@ -16,7 +16,7 @@ import {
 
 } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import {  serachCustomeById } from '../../../redux/modules/customer';
+import {  serachCustomeById, getSellerDebt } from '../../../redux/modules/customer';
 import { getClientPurchase } from '../../../redux/modules/invoices';
 // import { getCustomerById } from   'tu_accion_para_obtener_cliente_por_id';
 // import { getCustomerPurchases } from 'tu_accion_para_obtener_compras_de_cliente';
@@ -61,7 +61,10 @@ const CustomerPerfil = () => {
   
 	const [customer, setCustomer] = useState(null);
 	const [compras, setCompras] = useState([]);
-	
+	const [debts, setDebts] = useState(null);
+
+
+
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	  };
@@ -88,7 +91,9 @@ useEffect(() => {
 		.then((response) => setCompras(response))
 		.catch((error) => console.log(error));
   
-
+		dispatch(getSellerDebt({id}))
+		.then((response) => setDebts(response))
+		  .catch((error) => console.log(error));
 
 	}, [id, dispatch]);
   
@@ -122,10 +127,16 @@ fDateTime()
 			  </Typography>
 			   <Typography variant="body1">
 				
-				<strong>Total gastado: {compra.invoices. totalPurchases}</strong> 
+				<strong>Total gastado en Tienda: {compra.invoices. totalPurchases}</strong> 
 			  </Typography>
+			  <hr/>
 			  {/* Agrega más datos del cliente según tus necesidades */}
+			  <Typography variant="subtitle1">Deudas por Prestamos :</Typography>
+          <Typography variant="h4">${debts?.debt}</Typography>
+			
 			</Box>
+
+
 			<Typography variant="h5" component="h3">
 				Compras Realizadas
 			  </Typography>
