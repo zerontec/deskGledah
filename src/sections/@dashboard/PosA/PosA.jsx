@@ -26,7 +26,7 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import numeral from 'numeral';
 
-import {  useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { parseInt } from 'lodash';
 import { fetchProducts } from '../../../redux/modules/products';
 import { createInvoices } from '../../../redux/modules/invoices';
@@ -50,7 +50,11 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [productsQuantity, setProductsQuantity] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState('');
   const [isCredit, setIsCredit] = useState(false);
-  const [seller, setSeller] = useState({});
+  const [seller, setSeller] = useState({
+    codigo: '0000',
+    identification: '0000',
+    name: 'Vendedor',
+  });
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [queryp, setQueryp] = useState('');
   const [searchError, setSearchError] = useState(false);
@@ -69,11 +73,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [valoresDolar, setValoresDolar] = useState({});
-
-
-
- 
-
+  const [productName, setProductName] = useState('');
   const showAlert = () => {
     Swal.fire({
       title: '¡Alerta!',
@@ -97,9 +97,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     setSelectedDate(date);
   };
 
-  const handleProductQuantityChange = (event) => {
-    setProductsQuantity(event.target.value);
-  };
+
 
   const handleRemoveProduct = (index) => {
     const updatedProducts = [...products];
@@ -131,7 +129,6 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     }
   };
 
-
   const [numericValue, setNumericValue] = useState(0);
   const [nformattedValue, setNformattedValue] = useState('');
 
@@ -148,11 +145,9 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     }
   }, [valoresDolar]);
 
-console.log("numric value en postA", nformattedValue)
+  console.log('numric value en postA', nformattedValue);
 
-
-
-// Agregar Productos a la lista 
+  // Agregar Productos a la lista
 
   const handleAddProduct = (product, productsQuantity, selectedProductPrice) => {
     console.log('product', product);
@@ -161,10 +156,11 @@ console.log("numric value en postA", nformattedValue)
       if (productsQuantity > product.quantity) {
         setSearchError(true);
         showAlert();
-        // Swal.fire('¨La cantidad de venta es mayor a la cantidad disponible del producto   !', ' clicked el Botton!', 'Alert');
-        // setErrorMessage('La cantidad de venta es mayor a la cantidad disponible del producto');
+
         setQueryp('');
         setLimpiar('');
+        setProduct({});
+        setProductsQuantity(0);
 
         return;
       }
@@ -185,13 +181,13 @@ console.log("numric value en postA", nformattedValue)
 
       setProduct({});
       setProductsQuantity(0);
+      setProductName('');
     }
 
     searchProductRef.current.focus();
     setQueryp('');
     setProductsQuantity(0);
     setSelectedProductPrice(0);
-    
   };
 
   console.log('aquieSelecte customer', selectedCustomer);
@@ -226,75 +222,58 @@ console.log("numric value en postA", nformattedValue)
     efectivoBs: 0,
     transfer: 0,
     divisas: 0,
-    zelle:0,
-    panama:0,
-    pagoMovil:0,
-    puntoVenta:0
+    zelle: 0,
+    panama: 0,
+    pagoMovil: 0,
+    puntoVenta: 0,
   });
 
   const paymentAmountsSum = Object.values(paymentAmounts).reduce((total, amount) => total + parseFloat(amount || 0), 0);
-  console.log("paymenAmountSum", paymentAmountsSum)
+  console.log('paymenAmountSum', paymentAmountsSum);
 
   // const [paymentAmountBs, setPaymentAmountBs] = useState(0);
-  
 
   const [remainingAmounts, setRemainingAmounts] = useState(0);
   const [resultTotalBs, setResultTotalBs] = useState(0);
 
-
   useEffect(() => {
     const newRemainingAmounts = TotalF - paymentAmountsSum;
-    
+
     setRemainingAmounts(newRemainingAmounts);
     const remainBs = newRemainingAmounts * parseFloat(nformattedValue);
     setResultTotalBs(remainBs);
   }, [TotalF, paymentAmountsSum, nformattedValue]);
-  
 
-
+  const [cashresEfe, setcashresEfe] = useState(0);
+  const [cashresT, setcashresT] = useState(0);
+  const [cashrePM, setcashrePM] = useState(0);
+  const [cashrePV, setcashrePV] = useState(0);
+  const [changeAmount, setChangeAmount] = useState(0);
  
 
-
-
-
-
-
-
-const [cashresEfe, setcashresEfe]= useState(0)
-const [cashresT, setcashresT]= useState(0)
-const [cashrePM, setcashrePM]= useState(0)
-const [cashrePV, setcashrePV]= useState(0)
-const [changeAmount, setChangeAmount] = useState(0);
-const [changeAmountDolar, setChangeAmountDolar] = useState(0);
-
-
-  
   const handlePaymentAmountChange = (method, newAmount) => {
-    setPaymentAmounts(prevAmounts => {
+    setPaymentAmounts((prevAmounts) => {
       const updatedAmounts = {
         ...prevAmounts,
         [method]: newAmount || 0,
       };
-  
-
-     
 
       if (method === 'efectivoBs') {
         const newAmountBs = parseFloat(newAmount) || 0;
-        console.log("newAmountBs", newAmountBs)
+        console.log('newAmountBs', newAmountBs);
         const nformattedValueParsed = parseFloat(nformattedValue);
-        
+
         const retsDola = newAmountBs / nformattedValueParsed;
-        console.log("resDola", retsDola)
+        console.log('resDola', retsDola);
         const casResp = newAmountBs * nformattedValueParsed;
-       console.log("casResp ",casResp )
-        setcashresEfe(casResp );
-  
+        console.log('casResp ', casResp);
+        setcashresEfe(casResp);
+
         const newRemainingAmounts = remainingAmounts - retsDola;
-       console.log("newRemainingAmounts",newRemainingAmounts)
+        console.log('newRemainingAmounts', newRemainingAmounts);
         const newResultTotalBs = resultTotalBs - newAmountBs;
-       console.log("newResultTotalBs",newResultTotalBs)
-        
+        console.log('newResultTotalBs', newResultTotalBs);
+
         // setRemainingAmounts(newRemainingAmounts);
         // setResultTotalBs(newResultTotalBs);
       }
@@ -303,12 +282,12 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
         const nformattedValueParsed = parseFloat(nformattedValue);
         const retsDola = newAmountBs / nformattedValueParsed;
         const casRespT = newAmountBs * nformattedValueParsed;
-        
-        setcashresT(casRespT );
-  
+
+        setcashresT(casRespT);
+
         // const newRemainingAmounts = remainingAmounts - retsDola;
         // const newResultTotalBs = resultTotalBs - newAmountBs;
-  
+
         // setRemainingAmounts(newRemainingAmounts);
         // setResultTotalBs(newResultTotalBs);
       }
@@ -316,101 +295,85 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
       if (method === 'pagoMovil') {
         const newAmountBs = parseFloat(newAmount) || 0;
         const nformattedValueParsed = parseFloat(nformattedValue);
-       
+
         const casResPM = newAmountBs * nformattedValueParsed;
-        setcashrePM(casResPM );
-  
+        setcashrePM(casResPM);
+
         // const newRemainingAmounts = remainingAmounts - retsDola;
         // const newResultTotalBs = resultTotalBs - newAmountBs;
-  
+
         // setRemainingAmounts(newRemainingAmounts);
         // setResultTotalBs(newResultTotalBs);
       }
       if (method === 'puntoVenta') {
         const newAmountBs = parseFloat(newAmount) || 0;
         const nformattedValueParsed = parseFloat(nformattedValue);
-       
+
         const casResPV = newAmountBs * nformattedValueParsed;
-        setcashrePV(casResPV );
-  
+        setcashrePV(casResPV);
+
         // const newRemainingAmounts = remainingAmounts - retsDola;
         // const newResultTotalBs = resultTotalBs - newAmountBs;
-  
+
         // setRemainingAmounts(newRemainingAmounts);
         // setResultTotalBs(newResultTotalBs);
       }
-  
-  
+
       updatePaymentSummary(updatedAmounts);
-  
+
       return updatedAmounts;
     });
   };
   const [paymentSummary, setPaymentSummary] = useState([]);
 
-
-
-
- 
-
-
   const handlePaymentMethodChange = (event) => {
     const selectedMethod = event.target.value;
     setPaymentMethod(selectedMethod);
-  
+
     const updatedAmounts = {
       ...paymentAmounts,
       [selectedMethod]: paymentAmounts[selectedMethod] || 0,
     };
-  
+
     // Si el método de pago es "cash", establece el valor en bolívares
     if (selectedMethod === 'efectivoBs') {
-      updatedAmounts[selectedMethod] = cashresEfe
-      
+      updatedAmounts[selectedMethod] = cashresEfe;
     }
     if (selectedMethod === 'transfer') {
-      updatedAmounts[selectedMethod] = cashresT
-      
+      updatedAmounts[selectedMethod] = cashresT;
     }
     if (selectedMethod === 'pagoMovil') {
-      updatedAmounts[selectedMethod] = cashrePM
-      
+      updatedAmounts[selectedMethod] = cashrePM;
     }
     if (selectedMethod === 'puntoVenta') {
-      updatedAmounts[selectedMethod] = cashrePV
-      
+      updatedAmounts[selectedMethod] = cashrePV;
     }
-  
-  
+
     updatePaymentSummary(updatedAmounts);
   };
 
-
-
   useEffect(() => {
     updatePaymentSummary(paymentAmounts);
-  
+
     const cashAmount = parseFloat(paymentAmounts[paymentMethod]) || 0;
     const paseDo = cashAmount * parseFloat(nformattedValue);
     const difference = TotalF - paymentAmountsSum;
-  
+
     if (difference === 0) {
       setChangeAmount(0);
     } else if (difference < 0) {
       const change = Math.abs(difference);
-      console.log("change", change)
+      console.log('change', change);
       setChangeAmount(change);
     } else {
       const change = paseDo - resultTotalBs;
       setChangeAmount(change);
     }
     if (paymentAmountsSum > TotalF) {
-        setRemainingAmounts(0)
-        setResultTotalBs(0)
-
-
+      setRemainingAmounts(0);
+      setResultTotalBs(0);
     }
-  
+
     // if (paymentAmountsSum > TotalF) {
     //   const difference = paymentAmountsSum - TotalF;
     //   setPaymentAmounts(prevAmounts => ({
@@ -419,21 +382,29 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
     //   }));
     // }
   }, [paymentAmounts, resultTotalBs, TotalF, nformattedValue, paymentMethod, paymentAmountsSum]);
-  
-
-
 
   const updatePaymentSummary = (amounts) => {
-    const updatedSummary = Object.entries(amounts).map(([key, value]) => {
-      if (value !== 0) {
-        return {
-          method: key,
-          amount: key === 'efectivoBs' ? cashresEfe || 0 : key === 'puntoVenta' ? cashrePV || 0      : key === 'transfer' ? cashresT || 0 : key === 'pagoMovil'? cashrePM || 0 : parseFloat(value) || 0,
-        };
-      }
-      return null;
-    }).filter(item => item !== null);
-  
+    const updatedSummary = Object.entries(amounts)
+      .map(([key, value]) => {
+        if (value !== 0) {
+          return {
+            method: key,
+            amount:
+              key === 'efectivoBs'
+                ? cashresEfe || 0
+                : key === 'puntoVenta'
+                ? cashrePV || 0
+                : key === 'transfer'
+                ? cashresT || 0
+                : key === 'pagoMovil'
+                ? cashrePM || 0
+                : parseFloat(value) || 0,
+          };
+        }
+        return null;
+      })
+      .filter((item) => item !== null);
+
     if (updatedSummary.length > 0) {
       setPaymentSummary(updatedSummary);
     } else {
@@ -441,21 +412,9 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
     }
   };
 
-
-
-
-    
-
-      const formatAmountB = (amount) => numeral(amount).format('0,0.00');
-  
-
-
-
+  const formatAmountB = (amount) => numeral(amount).format('0,0.00');
 
   console.log('paymetodo', paymentMethod);
-
-
-
 
   const handleCloseModal = () => {
     // Restablece los estados a sus valores iniciales
@@ -464,23 +423,18 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
     setPaymentAmounts({
       efectivoBs: '',
       transfer: '',
-      zeller:'',
-      panama:'',
+      zeller: '',
+      panama: '',
       divisas: '',
-      pagoMovil:''
-
-  
+      pagoMovil: '',
     });
-    setPaymentAmounts({
-   
-  
-    });
+    setPaymentAmounts({});
     setIsCredit(false);
     setSelectedDate(null);
     setPaymentMethod('');
     setPaymentSummary([]);
-   setcashresEfe('')
-   setcashresT('')
+    setcashresEfe('');
+    setcashresT('');
   };
 
   const handleSubmitInvoice = (event) => {
@@ -488,17 +442,23 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
 
     let updatedPaymentMethodsArray = [];
     let totalChange = 0;
-  
+
     if (!isCredit) {
       updatedPaymentMethodsArray = paymentSummary.map((item) => ({
         method: item.method,
-        amount: item.method === 'efectivoBs' ? (cashresEfe || 0) :item.method === 'puntoVenta' ? (cashrePV || 0) : (item.method === 'transfer' ? (cashresT || 0) : item.amount),
+        amount:
+          item.method === 'efectivoBs'
+            ? cashresEfe || 0
+            : item.method === 'puntoVenta'
+            ? cashrePV || 0
+            : item.method === 'transfer'
+            ? cashresT || 0
+            : item.amount,
       }));
-  
+
       totalChange = changeAmount;
     }
-  
-  
+
     const selectedPrice = selectedProductPrice;
     const productToAdd = {
       ...product,
@@ -529,19 +489,14 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
       },
 
       seller: {
-        codigo: selectedSeller.codigo || '001' ,
-      
-    
-        identification: selectedSeller.identification || '25937952' ,
-        name:  selectedSeller.name || 'Daniel Garcia' ,
+        codigo: seller.codigo || selectedSeller.codigo,
+
+        identification: seller.identification || selectedSeller.identification,
+        name: seller.name || selectedSeller.name,
       },
 
-      
-      
       productos: productsData, // Usar el array `productsData` con datos modificados
     };
-
- 
 
     dispatch(createInvoices(invoiceData))
       .then((response) => {
@@ -550,7 +505,7 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
         setClient({});
         setProduct({});
         setProducts([]);
-        setProductsQuantity(0);
+        setProductsQuantity('');
         setIsModalOpen(null);
         // setManualClientData('');
         setSelectedCustomer('');
@@ -600,7 +555,7 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
       efectivoBs: '',
       transfer: '',
       credit: '',
-      puntoVenta:''
+      puntoVenta: '',
     });
     setIsCredit(false);
     setSelectedDate(null);
@@ -619,15 +574,14 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
     };
   }, []);
 
-
-
-
   return (
     <>
-      <Modal open={isModalOpen} onClose={handleCloseModal}   remainingAmounts={remainingAmounts}
-
-      
-  resultTotalBs={resultTotalBs}>
+      <Modal
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        remainingAmounts={remainingAmounts}
+        resultTotalBs={resultTotalBs}
+      >
         <Box
           sx={{
             position: 'absolute',
@@ -648,9 +602,12 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
           </Typography>
 
           <Box sx={{ marginBottom: 2 }}>
-            <Typography variant="h6">SubTotal: {resultSubB.toLocaleString('es-ES', {
-    minimumFractionDigits: 2,
-  })    }</Typography>
+            <Typography variant="h6">
+              SubTotal:{' '}
+              {resultSubB.toLocaleString('es-ES', {
+                minimumFractionDigits: 2,
+              })}
+            </Typography>
             <Typography variant="h6">Iva(16%): {iva.toFixed(2)}</Typography>
             <Typography variant="h6">
               Total: {currencys}
@@ -661,8 +618,8 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
             Por cobrar : {currencys}
             {formatAmountB(remainingAmounts)}
           </Typography>
-          <Typography  >
-             Bs: 
+          <Typography>
+            Bs:
             {formatAmountB(resultTotalBs)}
           </Typography>
           <hr />
@@ -681,7 +638,7 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
                   <MenuItem value="transfer">Transferencia</MenuItem>
                   <MenuItem value="puntoVenta">Punto de Venta</MenuItem>
                   <MenuItem value="divisas">Divisas</MenuItem>
-                  
+
                   <MenuItem value="zeller">Zelle</MenuItem>
                   <MenuItem value="panama">Banesco Panama</MenuItem>
                   <MenuItem value="pagoMovil">Pago Movil</MenuItem>
@@ -690,64 +647,62 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
             </Grid>
 
             {paymentMethod.includes('efectivoBs') && (
-    <Grid item xs={12}>
-      <TextField
-        fullWidth
-        type="number"
-        label="Efectivo Bs"
-        // eslint-disable-next-line dot-notation
-        value={paymentAmounts['efectivoBs']}
-        onChange={(e) => handlePaymentAmountChange('efectivoBs', e.target.value)}
-        disabled={isCredit || remainingAmounts < 0}
-      />
-    </Grid>
-  )}
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Efectivo Bs"
+                  // eslint-disable-next-line dot-notation
+                  value={paymentAmounts['efectivoBs']}
+                  onChange={(e) => handlePaymentAmountChange('efectivoBs', e.target.value)}
+                  disabled={isCredit || remainingAmounts < 0}
+                />
+              </Grid>
+            )}
 
-{paymentMethod.includes('pagoMovil') && (
-    <Grid item xs={12}>
-      <TextField
-        fullWidth
-        type="number"
-        label="Pago Movil"
-        // eslint-disable-next-line dot-notation
-        value={paymentAmounts['pagoMovil']}
-        onChange={(e) => handlePaymentAmountChange('pagoMovil', e.target.value)}
-        disabled={isCredit || remainingAmounts < 0}
-      />
-    </Grid>
-  )}
+            {paymentMethod.includes('pagoMovil') && (
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Pago Movil"
+                  // eslint-disable-next-line dot-notation
+                  value={paymentAmounts['pagoMovil']}
+                  onChange={(e) => handlePaymentAmountChange('pagoMovil', e.target.value)}
+                  disabled={isCredit || remainingAmounts < 0}
+                />
+              </Grid>
+            )}
 
-  {paymentMethod.includes('transfer') && (
-    <Grid item xs={12}>
-      <TextField
-        fullWidth
-        type="number"
-        inputMode="decimal"
-        label="Transferencia"
-        // eslint-disable-next-line dot-notation
-        value={paymentAmounts['transfer']}
-        onChange={(e) => handlePaymentAmountChange('transfer', e.target.value)}
-        disabled={isCredit || remainingAmounts < 0}
-      />
-    </Grid>
-  )}
+            {paymentMethod.includes('transfer') && (
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  inputMode="decimal"
+                  label="Transferencia"
+                  // eslint-disable-next-line dot-notation
+                  value={paymentAmounts['transfer']}
+                  onChange={(e) => handlePaymentAmountChange('transfer', e.target.value)}
+                  disabled={isCredit || remainingAmounts < 0}
+                />
+              </Grid>
+            )}
 
-
-{paymentMethod.includes('puntoVenta') && (
-    <Grid item xs={12}>
-      <TextField
-        fullWidth
-        type="number"
-        inputMode="decimal"
-        label="Punto de Venta"
-        // eslint-disable-next-line dot-notation
-        value={paymentAmounts['puntoVenta']}
-        onChange={(e) => handlePaymentAmountChange('puntoVenta', e.target.value)}
-        disabled={isCredit || remainingAmounts < 0}
-      />
-    </Grid>
-  )}
-
+            {paymentMethod.includes('puntoVenta') && (
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  inputMode="decimal"
+                  label="Punto de Venta"
+                  // eslint-disable-next-line dot-notation
+                  value={paymentAmounts['puntoVenta']}
+                  onChange={(e) => handlePaymentAmountChange('puntoVenta', e.target.value)}
+                  disabled={isCredit || remainingAmounts < 0}
+                />
+              </Grid>
+            )}
 
             {paymentMethod.includes('divisas') && (
               <Grid item xs={12}>
@@ -761,19 +716,19 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
                 />
               </Grid>
             )}
-             {paymentMethod.includes('zeller') && (
+            {paymentMethod.includes('zeller') && (
               <Grid item xs={12}>
                 <TextField
                   fullWidth
                   type="number"
-                  label="Zeller"
+                  label="Zelle"
                   value={paymentAmounts.zeller}
                   onChange={(e) => handlePaymentAmountChange('zeller', e.target.value)}
                   disabled={isCredit || remainingAmounts < 0}
                 />
               </Grid>
             )}
-              {paymentMethod.includes('panama') && (
+            {paymentMethod.includes('panama') && (
               <Grid item xs={12}>
                 <TextField
                   fullWidth
@@ -786,32 +741,33 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
               </Grid>
             )}
 
+            {paymentSummary.length > 0 && (
+              <Box sx={{ marginTop: '24px' }}>
+                <Typography variant="h6">Resumen de Pago:</Typography>
 
-{paymentSummary.length > 0 && (
-  <Box sx={{ marginTop: '24px' }}>
-    <Typography variant="h6">Resumen de Pago:</Typography>
-    
-    {paymentSummary.map((item, index) => (
-  <Typography key={index}>
-    {item.method}: {item.method === "pagoMovil" || item.method === "transfer" || item.method === "efectivoBs" || item.method === "puntoVenta" ? (
-      `${currency} ${formatAmountB(item.amount)}`
-    ) : (
-      `${currencys} ${formatAmountB(item.amount)}`
-    )}
-  </Typography>
-))}
-    {/* {paymentSummary.map((item, index) => (
+                {paymentSummary.map((item, index) => (
+                  <Typography key={index}>
+                    {item.method}:{' '}
+                    {item.method === 'pagoMovil' ||
+                    item.method === 'transfer' ||
+                    item.method === 'efectivoBs' ||
+                    item.method === 'puntoVenta'
+                      ? `${currency} ${formatAmountB(item.amount)}`
+                      : `${currencys} ${formatAmountB(item.amount)}`}
+                  </Typography>
+                ))}
+                {/* {paymentSummary.map((item, index) => (
       <Typography key={index}>
         {item.method}: {currencys} {formatAmountB(item.amount)}
       </Typography>
     ))} */}
-    {changeAmount > 0 && (
-      <Typography>
-        Cambio : {currencys} {changeAmount.toFixed(2)}
-      </Typography>
-    )}
-  </Box>
-)}
+                {changeAmount > 0 && (
+                  <Typography>
+                    Cambio : {currencys} {changeAmount.toFixed(2)}
+                  </Typography>
+                )}
+              </Box>
+            )}
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="credit-label">A crédito</InputLabel>
@@ -846,7 +802,7 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
           </Grid>
 
           <hr />
-{/* 
+          {/* 
           <Button variant="contained" onClick={() => closeModal()}>
             X
           </Button> */}
@@ -940,7 +896,12 @@ const [changeAmountDolar, setChangeAmountDolar] = useState(0);
           product={product}
           setIsPopupOpen={setIsPopupOpen}
           isPopupOpen={isPopupOpen}
+          productsQuantity={productsQuantity}
+          setProductsQuantity={setProductsQuantity}
           openModal={openModal} // envio la funcion
+          setProduct={setProduct}
+          productName={productName}
+          setProductName={setProductName}
         />
 
         <ErrorMessage message={errorMessage} show={searchError} />

@@ -93,13 +93,13 @@ const columns = [
 
 const ProductTable = () => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [errors, setErrors] = useState({});
+  
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [open, setOpen] = useState(false);
-const [loading, setloading] = useState(true);
+
 
   const [showPreview, setShowPreview] = useState(false);
   const [numPages, setNumPages] = useState(null);
@@ -164,9 +164,7 @@ const [loading, setloading] = useState(true);
     setSelectedProducts([]);
     Swal.fire("Los productos han sido borrado!");
 	
-    setTimeout(() => {
-      window.location.reload();
-    }, 500);
+    dispatch(getAllProduct());
     } else {
     Swal.fire("Los productos  Estan Seguro !");
     }
@@ -186,7 +184,7 @@ const [loading, setloading] = useState(true);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Llamada a la API para obtener los datos de los pacientes y almacenarlos en el estado del componente.
+    
     dispatch(getAllProduct());
   }, [dispatch]);
 
@@ -222,9 +220,7 @@ const [loading, setloading] = useState(true);
         dispatch(deleteProduct(items.id));
         Swal.fire('El producto ha sido borrado!');
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
+        dispatch(getAllProduct());
       } else {
         Swal.fire('El producto  Esta Seguro !');
       }
@@ -486,9 +482,9 @@ const [loading, setloading] = useState(true);
                         </TableCell>
 
                         <TableCell className="tableCell">
-                          <div className="deleteButton" id={items.id} onClick={() => deleteHandler(items)}>
-                            <Button>Borrar</Button>
-                          </div>
+                         
+                            <Button  variant='contained' style={{backgroundColor:"red", color:"white"}}  id={items.id} onClick={() => deleteHandler(items)}>Borrar</Button>
+                         
                         </TableCell>
                       </>
 

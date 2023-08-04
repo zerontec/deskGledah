@@ -1,3 +1,4 @@
+/* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { useState, useEffect } from 'react';
@@ -15,14 +16,15 @@ import Box from '@mui/material/Box';
 
 import Button from '@mui/material/Button';
 import { useDispatch, useSelector } from 'react-redux';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Document, Page, pdfjs } from '@react-pdf/renderer';
-
+import { jsPDF } from "jspdf";
 import Swal from 'sweetalert2';
 import Modal from '@mui/material/Modal';
 import styled from 'styled-components';
 import { fDateTime } from '../../../utils/formatTime';
 import generatePDF from '../../../utils/generatePdf';
+
 import { getAllNotas, updateNota, deleteNota } from '../../../redux/modules/notasC';
 
 // pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -74,29 +76,17 @@ const columns = [
     label: 'Factura',
     minWidth: 50,
   },
-//   {
-//     id: 'address',
-//     label: 'precio',
-//     minWidth: 150,
-//   },
-//   {
-//     id: 'check',
-//     label: 'Exitencia',
-//   },
-//   {
-//     id: 'canti',
-//     label: ' Defectuosos',
-//   },
+
 ];
 const NotasCredito = () => {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [selectedNota, setSelectedNota] = useState(null);
-	const [errors, setErrors] = useState({});
+	
 	const [selectedNotaId, setSelectedNotaId] = useState(null);
 	const [open, setOpen] = useState(false);
-  const [loading, setloading] = useState(true);
+  
   
 	const [showPreview, setShowPreview] = useState(false);
 	const [numPages, setNumPages] = useState(null);
@@ -258,6 +248,56 @@ const NotasCredito = () => {
 		return text.charAt(0).toUpperCase() + text.slice(1);
 	  }
 	
+
+	  const generatePDFA = () => {
+		if (!selectedNota ) {
+		  return;
+		}
+	  
+		const {clienteData,facturaAfectada,numeroNota,fecha,monto, } = selectedNota;
+	  
+		
+		// Crear un nuevo documento PDF
+		// eslint-disable-next-line new-cap
+		const doc = new jsPDF();
+	  
+		// Agregar el número de factura
+		doc.setFontSize(16);
+		doc.text(`Nota de Credito: ${numeroNota}`, 20, 20);
+		doc.text(`Factura Afectada: ${facturaAfectada}`, 20, 30);
+	  
+		// Agregar la fecha de la factura
+		doc.setFontSize(12);
+		doc.text(`Fecha de Factura: ${fDateTime(fecha)}`, 20, 40);
+
+	  
+		// Agregar los datos generales de la factura
+		doc.setFontSize(15);
+		doc.text('Datos Cliente:', 20, 50);
+		doc.setFontSize(12);
+		doc.text(`Cliente: ${clienteData.name}`, 20, 60);
+		doc.text(`Cédula o Rif: ${clienteData.identification}`, 20, 70);
+		doc.text(`Direccion: ${clienteData.address}`, 20, 80);
+		
+		
+	  
+	  
+		// Agregar la lista de productos
+		doc.setFontSize(14);
+		
+		doc.text(`Monto : ${monto}`, 20, 120);
+		
+	;
+	  
+	
+	  
+		// Guardar el documento PDF
+		doc.save('Nota de Credito.pdf');
+	  };
+	  
+
+
+
 	//   const isDeleteButtonDisabled = selectedNota.length === 0;
 	
 	  return (
@@ -289,6 +329,9 @@ const NotasCredito = () => {
 					<strong>Nota de Credito Numero  :</strong> {selectedNota.numeroNota}
 				  </p>
 				  <p>
+					<strong>Factura Afectada Numero  :</strong> {selectedNota.facturaAfectada}
+				  </p>
+				  <p>
 					<strong>Monto:</strong> {selectedNota.monto}
 				  </p>
 				  <h3>Datos de Cliente:</h3>
@@ -310,6 +353,10 @@ const NotasCredito = () => {
 				  <Button variant="contained" onClick={() => setSelectedNota(null)}>
 					Cerrar
 				  </Button>
+
+				  <Button variant="contained" onClick={generatePDFA} style={{marginLeft:10, backgroundColor:'red'}}>
+          Generar PDF
+        </Button>
 				</>
 			  )}
 			</Box>
@@ -448,11 +495,11 @@ const NotasCredito = () => {
 						
 						<TableRow key={items.id}>
 							
-							<TableCell align="left"> {items.numeroNota}</TableCell>
-						  <TableCell align="left"> {fDateTime(items.fecha)}</TableCell>
+							<TableCell align="left"> {items?.numeroNota}</TableCell>
+						  <TableCell align="left"> {fDateTime(items?.fecha)}</TableCell>
 						 
-						  <TableCell align="left"> {items.monto}</TableCell>
-						  <TableCell align="left"> {items.facturaAfectada}</TableCell>
+						  <TableCell align="left"> {items?.monto}</TableCell>
+						  <TableCell align="left"> {items?.facturaAfectada}</TableCell>
 						  {/* <TableCell align="left"> {items.quantity}</TableCell>
 						  <TableCell align="left"> {items.defectuosos}</TableCell>
 				    */}
@@ -473,9 +520,9 @@ const NotasCredito = () => {
 							</TableCell>
 	
 							<TableCell className="tableCell">
-							  <div className="deleteButton" id={items.id} onClick={() => deleteHandler(items)}>
-								<Button>Borrar</Button>
-							  </div>
+							 
+								<Button   variant='contained' style={{backgroundColor:"red", color:"white"}} id={items.id} onClick={() => deleteHandler(items)}>Borrar</Button>
+							 
 							</TableCell>
 						  </>
 	
