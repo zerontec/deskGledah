@@ -20,6 +20,9 @@ import paymentReducer from './modules/payments';
 import reportReducer from './modules/reports';
 import payablesReducer from './modules/accountPayables';
 import expenseReducer from './modules/expenses';
+import loanClientsReducer from './modules/loanClient';
+import paymentCustomerReducer from './modules/paymentCustomer';
+import expenseWeekReducer from './modules/ExpenseWeek';
 
 
 // Combinar los reducers de tus módulos
@@ -38,10 +41,13 @@ const rootReducer = combineReducers({
   productd:productdReducer,
   notasc:notaReducer,
   loan:loanReducer,
+  loanClient:loanClientsReducer,
   payment:paymentReducer,
+  paymentCustomer:paymentCustomerReducer,
   report:reportReducer,
   payable:payablesReducer,
-  expense:expenseReducer
+  expense:expenseReducer,
+  expenseWeek:expenseWeekReducer
  
   // Otros módulos de Redux
 });

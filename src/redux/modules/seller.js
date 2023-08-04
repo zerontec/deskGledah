@@ -86,7 +86,7 @@ export const fetchSellerRequest = () => ({
         // Aquí podrías enviar una notificación de éxito al usuario
       } catch (error) {
         if (error.response && error.response.status === 409) {
-          throw new Error("El usuario o email  ya existe. Ingrese otro.");
+          throw new Error("El identificacion o Codigo ya existe. Ingrese otro.");
         }
         throw error;
       }
