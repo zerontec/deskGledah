@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
 import numeral from 'numeral';
 import { Button, TextField, Alert } from '@mui/material';
 
-import { createAbonocxp } from '../../redux/modules/accountPayables';
+import { createAbonocxp, getAllPayables } from '../../redux/modules/accountPayables';
 
 const FormContainer = styled.form`
   display: flex;
@@ -88,6 +88,13 @@ const CreateAbonocxp = ({ compraId }) => {
 
   const dispatch = useDispatch();
 
+useEffect(()=>{
+  dispatch(getAllPayables());
+
+
+}, [dispatch])
+
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormInfo((prevFormInfo) => ({
@@ -114,7 +121,7 @@ const CreateAbonocxp = ({ compraId }) => {
       .then((response) => {
         setLoading(false);
         Swal.fire('Abono a cuenta creado con éxito!', '', 'success');
-        window.location.reload();
+       dispatch(getAllPayables())
         setFormInfo({
           proveedor: '',
           montoPagado: '',
