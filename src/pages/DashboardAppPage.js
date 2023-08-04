@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import axios from 'axios'
+
 import { faker } from '@faker-js/faker';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 
@@ -8,10 +10,10 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Grid, Container, Typography, Box, Button } from '@mui/material';
+import { Grid, Container, Typography, Box, Button, Paper } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
-
+import authHeader from '../redux/services/auth-header';
 
 // sections
 import {
@@ -27,8 +29,10 @@ import {
 } from '../sections/@dashboard/app';
 import { ModuleLinks } from '../components/ModuleLinks';
 import { FloatingButtonComponent } from '../components/FloatingButtonComponent';
+
 import { SalesRealTime } from '../components/SalesRealTime';
 
+const API_URL_D = 'http://localhost:5040/';
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
@@ -57,11 +61,13 @@ export default function DashboardAppPage() {
       // Convertir los valores a números utilizando parseFloat
       const bcv = data.bcv;
       const enparalelovzla =data.enparalelovzla;
+      const dolarToday = data.monitordolarweb;
       // ...
 
       setValoresDolar({
         bcv,
         enparalelovzla,
+        dolarToday
         // ...
       });
     } catch (error) {
@@ -69,6 +75,46 @@ export default function DashboardAppPage() {
     }
   };
 
+  const [salesCount, setSalesCount] = useState(0);
+
+//   useEffect(() => {
+//     // Obtener el número de ventas para la fecha actual (puedes cambiar la fecha según tus necesidades)
+//     const currentDate = new Date().toISOString().split('T')[0];
+// // const currentDate = new Date().toLocaleDateString('es-ES');
+
+//     axios.get(`${API_URL_D}api/invoice/day-sales-count/${currentDate}`,{ headers: authHeader() }).then((response) => {
+//       setSalesCount(response.data.salesCount);
+//     });
+//   }, []);
+  const fetchSalesCount = async () => {
+    try {
+      const date = new Date();
+  const dia = date.getDate().toString().padStart(2, '0'); // Obtiene el día y lo convierte a string con dos dígitos (agrega un cero a la izquierda si es necesario)
+  const mes = (date.getMonth() + 1).toString().padStart(2, '0'); // Obtiene el mes (se suma 1 porque los meses en JavaScript van de 0 a 11) y lo convierte a string con dos dígitos
+  const anio = date.getFullYear().toString(); // Obtiene el año y lo convierte a string
+
+  const fechaFormateada = `${mes}-${dia}-${anio}`;
+  console.log("feach", fechaFormateada);
+   console.log("feach",fechaFormateada); 
+  const formattedDate = date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' }); // Formatear la fecha en "MM-DD-YYYY"
+
+      
+      
+      const response = await axios.get(`${API_URL_D}api/invoice/day-sales-count/${fechaFormateada}`,{ headers: authHeader() });
+      setSalesCount(response.data.salesCount);
+    } catch (error) {
+      console.error('Error fetching sales count:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSalesCount();
+  }, []);
+
+
+
+
+  console.log('currenSale', salesCount)
 
 // const fetchDayliSales = async() => {
 
@@ -93,7 +139,7 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | La Muñeca </title>
+        <title> Escritorio | Gledah </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -103,7 +149,7 @@ export default function DashboardAppPage() {
 
         <Grid item xs={12} md={6} lg={9}>
           <Typography variant="h4" sx={{ mb: 5 }}>
-         Dashboard
+         Escritorio
         </Typography>
 
 
@@ -121,17 +167,37 @@ export default function DashboardAppPage() {
 
 
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={6}>
-          {/* <MonetizationOnIcon style={{color:'green'}}/> */}
-            <AppWidgetSummary title="Tasa $ BCV " total={valoresDolar.bcv} icon={'ant-design:dollar'} />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 
-          </Grid>
+            <Box sx={{ backgroundColor: '#ff5722', padding: 5, borderRadius:5 , marginRigth:2 }}>
+          <Paper  style={{backgroundColor:"#ffffff0a"}} elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+      <Typography variant="h5" style={{color:"white"}}>Tasa $ en BCV </Typography>
+      <Typography variant="h3" color="white">
+        {valoresDolar.bcv}
+      </Typography>
+    </Paper>
+    </Box>
 
-          <Grid item xs={12} sm={6} md={6}>
+      
+  <Box sx={{ backgroundColor: '#00cc99', padding: 5 ,borderRadius:5  }}>
+          <Paper style={{backgroundColor:"#ffffff0a"}} elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+      <Typography variant="h5" style={{color:"white"}}>Tasa $  Paralelo Vzl</Typography>
+      <Typography variant="h3" color="white">
+        {valoresDolar.enparalelovzla}
+      </Typography>
+    </Paper>
+    </Box>
+       
           {/* <MonetizationOnIcon style={{color:'red'}}/> */}
-            <AppWidgetSummary title="Tasa $ Paralela" total={valoresDolar.enparalelovzla} color="info" icon={'ant-design:dollar'} />
-          </Grid>
+          <Box sx={{ backgroundColor: '#007bff', padding: 5,  borderRadius:5 }}>
+          <Paper style={{backgroundColor:"#ffffff0a"}} elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+      <Typography variant="h5" style={{color:"white"}}>Numero de Ventas<br/> de el dia</Typography>
+      <Typography variant="h3" color="white">
+        {salesCount}
+      </Typography>
+    </Paper>
+    </Box>
+        
 
           {/* <Grid item xs={12} sm={6} md={3}>
           <AddShoppingCartIcon style={{color:"blue"}}/>
@@ -308,7 +374,7 @@ export default function DashboardAppPage() {
               ]}
             />
           </Grid> */}
-        </Grid>
+        </div>
 
 
      
