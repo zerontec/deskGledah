@@ -1,6 +1,6 @@
 {
     "name": "gledah",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Sistema Facturacion y Administracion ",
     "main": "public/electron.js",
     "homepage": "./",
