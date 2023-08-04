@@ -11,6 +11,8 @@ import useResponsive from '../hooks/useResponsive';
 // components
 import Logo from '../components/logo';
 
+import loginImage from '../assets/illustrations/illustration_login.png'
+
 // sections
 
 
@@ -58,7 +60,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Login | Muneca </title>
+        <title> Login | Gledah </title>
       </Helmet>
 
       <StyledRoot>
@@ -75,7 +77,7 @@ export default function LoginPage() {
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
              Hola Bienvenido
             </Typography>
-            <img src="/assets2/illustration_login.png" alt="login" />
+            <img src={loginImage} alt="login" />
           </StyledSection>
         )}
 
