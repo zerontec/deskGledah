@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Swal from 'sweetalert2';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import validator from 'validator';
 import { Button, TextField, Alert } from '@mui/material';
 import { createDevolution } from '../../redux/modules/devolucionV';
+import { getAllInvoices } from '../../redux/modules/invoices';
 
 const FormContainer = styled.form`
   display: flex;
@@ -47,7 +50,7 @@ const CreateDevolucion = () => {
   const [validationErrors, setValidationErrors] = useState({});
 
   const { message } = useSelector((state) => state);
-  console.log('mensaje', message);
+  // console.log('mensaje', message);
 
 //   const [productList, setProductList] = useState([]);
 
@@ -104,6 +107,12 @@ const CreateDevolucion = () => {
     return errors;
   };
 
+
+  useEffect(()=> {
+
+    dispatch(getAllInvoices())
+
+  }, [dispatch])
   const handleSubmitDevolution = (event) => {
     event.preventDefault();
     const errors = validateForm();
@@ -118,6 +127,9 @@ const CreateDevolucion = () => {
       .then((response) => {
         setLoading(false);
         Swal.fire('Devolucion creada con éxito!', '', 'success');
+       
+        dispatch(getAllInvoices())
+       
         setDevolutionData({
           invoiceNumber: '',
           motivo: '',
@@ -128,7 +140,7 @@ const CreateDevolucion = () => {
         if (response.error) {
           setMessageError(response.error);
         }
-        setValidationErrors({});
+        // setValidationErrors({});
       })
 
       .catch((error) => {
@@ -140,6 +152,14 @@ const CreateDevolucion = () => {
       });
     // Limpia el formulario después de la creación exitosa del proveedor
   };
+
+
+  const motivoOptions = [
+    { value: 'defectuoso', label: 'Defectuoso' },
+    { value: 'cambio', label: 'Cambio' },
+   
+    // Agrega más opciones según tus necesidades
+  ];
 
   return (
     <>
@@ -177,16 +197,21 @@ const CreateDevolucion = () => {
                   onChange={handleInputChange}
                 />{' '}
                 {validationErrors.invoiceNumber && <span>{validationErrors.invoiceNumber}</span>}
-                <TextField
-                  required
-                  label="Motivo"
-                  name="motivo"
-                  type="text"
-                  id="motivo"
-                  value={devolutionData.motivo}
-                  onChange={handleInputChange}
-                />{' '}
-                {validationErrors.motivo && <span>{validationErrors.motivo}</span>}
+                <Select
+  required
+  label="Motivo"
+  name="motivo"
+  id="motivo"
+  value={devolutionData.motivo}
+  onChange={handleInputChange}
+>
+  {motivoOptions.map((option) => (
+    <MenuItem key={option.value} value={option.value}>
+      {option.label}
+    </MenuItem>
+  ))}
+</Select>
+{validationErrors.motivo && <span>{validationErrors.motivo}</span>}
                 {devolutionData.productos.map((product, index) => (
                   <div key={index}>
                     <TextField
