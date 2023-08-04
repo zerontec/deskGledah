@@ -17,9 +17,12 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Swal from 'sweetalert2';
 import Modal from '@mui/material/Modal';
+import { jsPDF } from "jspdf";
 
 import { getAllCuentas, updateCuenta } from '../../../redux/modules/cuentasxcobrar';
 import { fDateTime } from '../../../utils/formatTime';
+import { CreateAbonocxc } from '../../../components/CreateAbonocxc';
+import { ViewAbonoCxc } from '../../../components/ViewAbonoCxc';
 
 const FormContainer = styled.form`
   display: flex;
@@ -65,9 +68,10 @@ const columns = [
   },
   {
     id: 'gender',
-    label: 'Ver Data',
+    label: 'Saldo Pendiente',
     minWidth: 50,
   },
+ 
 
   {
     id: 'check',
@@ -167,6 +171,66 @@ const CuentasPorCobrar = () => {
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
 
+
+  const generatePDF = () => {
+    if (!selectedCuenta ) {
+      return;
+    }
+  
+    const {invoiceId,montoCobrar,clienteDataC,dueDate, invoiceNumber, credit, status, clienteData, vendedorData, productoFactura, totalProductosSinIva, ivaTotal, amount, metodoPago, createdAt } = selectedCuenta;
+    
+    // Crear un nuevo documento PDF
+    // eslint-disable-next-line new-cap
+    const doc = new jsPDF();
+  
+      // Agregar el membrete al PDF
+      const companyName = 'Galeria Amar, C.A';
+      const companyAddress = 'Av Antonio Paez San Felix ';
+      doc.text(companyName, 20, 10);
+      doc.text(companyAddress, 20, 18);
+    
+  
+    // Agregar el número de factura
+    doc.setFontSize(16);
+    doc.text(`Número de Factura: ${invoiceId}`, 20, 28);
+  
+    // Agregar la fecha de la factura
+    doc.setFontSize(12);
+    doc.text(`Fecha de Venta: ${fDateTime(createdAt)}`, 20, 40);
+    doc.text(`Fecha de Vencimiento: ${fDateTime(dueDate)}`, 20, 50);
+  
+    
+    // Agregar la lista de productos
+    doc.setFontSize(14);
+    doc.text('Datos Cliente:', 20, 60);
+    doc.text(`Nombre: ${clienteDataC.name}`, 20, 70);
+    doc.text(`Identificacion: ${clienteDataC.identification}`, 20, 76);
+    doc.text(`Direccion: ${clienteDataC.address}`, 20, 83);
+  
+
+
+  
+    // Agregar los totales
+    doc.setFontSize(15);
+    doc.text(`Monto a Cobrar: ${montoCobrar.toString()}`, 20,  100);
+  
+
+  
+    // Guardar el documento PDF
+    doc.save('Cuenta por Cobrar.pdf');
+  };
+  
+
+
+
+
+
+
+
+
+
+
+
   return (
     <>
     <hr/>
@@ -193,32 +257,39 @@ const CuentasPorCobrar = () => {
               <ul>
                 <h3>Información del Cliente:</h3>
                 <p>
-                  <strong>Nombre:</strong> {capitalizeFirstLetter(selectedCuenta.clienteDataC.name)}
+                  <strong>Nombre:</strong> {capitalizeFirstLetter(selectedCuenta?.clienteDataC.name)}
                   <br />
-                  <strong>Dirección:</strong> {capitalizeFirstLetter(selectedCuenta.clienteDataC.address)}
+                  <strong>Dirección:</strong> {capitalizeFirstLetter(selectedCuenta?.clienteDataC.address)}
                   <br />
-                  <strong>Identificación:</strong> {selectedCuenta.clienteDataC.identification}
+                  <strong>Identificación:</strong> {selectedCuenta?.clienteDataC.identification}
                   <br />
                 </p>
               </ul>
               <p>
-                <strong>Factura:</strong> {selectedCuenta.invoiceId}
+                <strong>Factura:</strong> {selectedCuenta?.invoiceId}
               </p>
 
               <p>
-                <strong>Monto:</strong> {selectedCuenta.montoCobrar}
+                <strong>Monto:</strong> {selectedCuenta?.montoCobrar}
               </p>
               <p>
-                <strong>Fecha Compra:</strong> {fDateTime(selectedCuenta.createdAt)}
+                <strong>Fecha de Venta:</strong> {fDateTime(selectedCuenta?.createdAt)}
               </p>
               <p>
-                <strong>Fecha Vencimiento:</strong> {fDateTime(selectedCuenta.dueDate)}
+                <strong>Fecha Vencimiento:</strong> {fDateTime(selectedCuenta?.dueDate)}
               </p>
 
               <Button variant="contained" onClick={() => setSelectedCuenta(null)}>
                 Cerrar
               </Button>
+
+              <Button variant="contained" onClick={generatePDF} style={{marginLeft:10, backgroundColor:'red'}}>
+          Generar PDF
+        </Button>
+
             </>
+
+            
           )}
         </Box>
       </Modal>
@@ -376,9 +447,9 @@ const CuentasPorCobrar = () => {
             <TableCell align="left"> {capitalizeFirstLetter(items.status)}</TableCell>
                       {/* <TableCell align="left"> {items.clienteData.name}</TableCell>
 					  <TableCell align="left"> {items.vendedorDataC.codigo}</TableCell> */}
-                      <TableCell align="left"> {items.montoCobrar}</TableCell>
-                      <TableCell align="left"> {items.invoiceId}</TableCell>
-
+                      <TableCell align="left"> {items?.montoCobrar}</TableCell>
+                      <TableCell align="left"> {items?.invoiceId}</TableCell>
+                      <TableCell align="left"> {items?.saldoPendiente}</TableCell>
   
                       <>
                         <TableCell className="tableCell">
@@ -387,17 +458,12 @@ const CuentasPorCobrar = () => {
                           </Button>
                         </TableCell>
 
-                        <TableCell className="tableCell">
-                          {/* <Link
-							to={`analisis/edit/${analisi.codigo}`}
-							style={{ textDecoration: "none" }}
-						  >
-							<div className="viewButton">Editar</div>
-						  </Link> */}
+                        {/* <TableCell className="tableCell">
+         
                           <Button variant="contained" onClick={() => handleEditClick(items)}>
                             Editar
                           </Button>
-                        </TableCell>
+                        </TableCell> */}
 
                         <TableCell className="tableCell">
                           {/* <div className="deleteButton"
@@ -407,6 +473,20 @@ const CuentasPorCobrar = () => {
 							<Button> Borrar </Button>
 						  </div > */}
                         </TableCell>
+                        <TableCell className="tableCell">
+                  		
+                      <ViewAbonoCxc ventaId={items.id} />
+                         
+                         </TableCell>
+                      <TableCell className="tableCell">
+        
+                  
+                    <CreateAbonocxc ventaId={items.id} /> 
+                               
+                       </TableCell>
+        
+
+
                       </>
                     </TableRow>
          ))
