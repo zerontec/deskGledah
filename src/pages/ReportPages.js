@@ -75,9 +75,7 @@ const ReportPages = () => (
      <Link to='/dashboard/cierres' >    <Button variant="contained">
            Resumen de Cierres
           </Button></Link>
-          <Button variant="contained">
-            Informe 2
-          </Button>
+      
         </Grid>
         {/* Agrega más Grid items para otros subcomponentes de informes */}
       </Grid>
