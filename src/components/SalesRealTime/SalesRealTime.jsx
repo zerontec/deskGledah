@@ -38,7 +38,7 @@ console.log(totalSales)
 
   return (
     <div>
-      <h2>Total de Ventas: {totalSales}</h2>
+      <h2>Total de Ventas $: {totalSales}</h2>
     </div>
   );
 };
