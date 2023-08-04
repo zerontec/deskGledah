@@ -31,7 +31,7 @@ const SummaryContainer = styled(Box)`
   background-color: #ff8000;
   margin-bottom: 10px;
   margin-top: 30px;
-  margin-right: 20px;
+  /* margin-right: 20px; */
   font-family: 'DIGIT-LCD';
   background-image: linear-gradient(to bottom, #ff8000, #ffbf00);
 `;
@@ -162,15 +162,9 @@ const handleSearchSeller = () => {
 	  if (exactMatch) {
 		setSeller(exactMatch);
 		handleSellerSelect(exactMatch);
-	  } else {
-		const partialMatch = availableSeller.find((seller) => seller.codigo.includes(querys));
-		setSeller(partialMatch || {});
-	  }
+	  } 
 	  setSearchError(true);
-	} else {
-	  // Aquí puedes manejar el caso en el que availableSeller no esté definida o no sea una matriz válida
-	  // Puedes establecer un valor predeterminado o mostrar un mensaje de error
-	}
+	} 
   };
   
   
@@ -333,7 +327,7 @@ const totalB = TotalF * parseFloat(nformattedValue)
 
 
 			<Box>
-			  Resumen de la factura
+			
 			  <Grid container spacing={2} sx={{ marginBottom: 2 }}>
 				<Grid item xs={12} md={12}>
 				  <SummaryContainer>
