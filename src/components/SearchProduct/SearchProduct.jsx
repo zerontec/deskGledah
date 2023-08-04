@@ -19,42 +19,8 @@ import {
 import { ErrorMessage } from '../ErrorMessage';
 import { fetchProducts } from '../../redux/modules/products';
 
-const SummaryContainerP = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  margin-top: 16px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 15px;
-  color: white;
-  font-weight: 600;
-  background-color: #27ae60;
-  margin-bottom: 10px;
-  margin-top: 30px;
-  margin-right: 20px;
 
-  & > * {
-    margin-right: 10px;
-  }
-`;
 
-const FormContainer = styled.form`
-  display: flex;
-  gap: 3rem;
-  width: 100%;
-  max-width: 1000px;
-  margin-bottom: 2rem;
-  background-color: #212f3d;
-  border-radius: 30px;
-`;
-
-const StyledBox = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  justify-content: right;
-  margin-top: 20;
-`;
 
 const StyledTextField = styled(TextField)`
   && {
@@ -69,30 +35,31 @@ const StyledTextField = styled(TextField)`
     }
   }
 `;
-
 const SearchProduct = ({
   selectedProductPrice,
   setSelectedProductPrice,
+  setProductsQuantity,
+  setProductName,
+  productName,
+  setProduct,
+  product,
+  productsQuantity,
   handleAddProduct,
   limpiar,
   setLimpiar,
   searchProductRef,
-  openModal,  // la recibo como prosps
-
+  openModal,
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const availableProducts = useSelector((state) => state.product);
- 
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  
 
   const [products, setProducts] = useState([]);
   const [queryp, setQueryp] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [searchError, setSearchError] = useState(false);
-  const [product, setProduct] = useState({});
-  const [productsQuantity, setProductsQuantity] = useState(0);
+  // const [product, setProduct] = useState({});
   
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -109,8 +76,6 @@ const SearchProduct = ({
 
   const handlePriceChange = (event) => {
     setSelectedProductPrice(event.target.value);
-  
-    console.log(selectedProductPrice, productsQuantity)
   };
 
   useEffect(() => {
@@ -121,7 +86,7 @@ const SearchProduct = ({
 
   const resetFormP = () => {
     setProduct({});
-    setProducts([])
+    setProducts([]);
     setProductsQuantity(0);
     setSelectedProductPrice('');
   };
@@ -131,43 +96,33 @@ const SearchProduct = ({
   const handleProductQuantityChange = (event) => {
     setProductsQuantity(event.target.value);
   };
+
+  const [searchResults, setSearchResults] = useState([]);
+
+
+  const handleProductSelect = (product) => {
+    setProduct(product);
+    if (product && product.price && product.name) {
+      setSelectedProductPrice(product.price);
+      setProductsQuantity(0); // Reiniciar la cantidad al seleccionar un nuevo producto
+      setProductName(product.name)
+    } else {
+      setSelectedProductPrice(0);
+      setProductsQuantity(0);
+      setProductName('')
+      setProduct({})
+    }
+    setSearchResults([]);
+    setModalOpen(false);
+    setQueryp('');
+  };
+
   
-//   const handleProductSelect = (selectedProduct) => {
-//     setProduct({
-//       description: selectedProduct.description || '',
-//       price: selectedProduct.price || '',
-//       barcode: selectedProduct.barcode || '',
-//       name: selectedProduct.name || '',
-    
-//     });
-    
-//     // handleAddProduct(product, productsQuantity);
-// console.log("handle", handleProductSelect)
-   
-// setSelectedProductPrice(selectedProduct.price || '');
-//     console.log("enHandle",product)
-//     setTimeout(() => {
-//       quantityRef.current.focus();
-//     }, 0);
-
-//     setModalOpen(false);
-//   };
-
-const [searchResults, setSearchResults] = useState([]);
-
-const handleProductSelect = (product) => {
-  setProduct(product);
-  if (product && product.price) {
-    setSelectedProductPrice(product.price);
-  } else {
-    setSelectedProductPrice(0);
+  function capitalizeFirstLetter(text) {
+    if (!text) return '';
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
-  setSearchResults([]);
   
-  setModalOpen(false);
- setQueryp('')
-};
-
 
 
   return (
@@ -194,19 +149,23 @@ const handleProductSelect = (product) => {
             style={{color:'white'}}
             onChange={(e) => setQueryp(e.target.value.toLowerCase())}
           />
-          {queryp.length > 0 &&
-            Array.isArray(availableProducts.products) &&
-            availableProducts.products.length > 0 && (
-              <Table>
-                {availableProducts.products.map((result, index) => (
-                  <TableRow key={result.id} onClick={() => handleProductSelect(result)}>
-                    <TableCell style={{ color: 'white' }}>{result.name}</TableCell>
-                    <TableCell style={{ color: 'white' }}>{result.description}</TableCell>
-                    <TableCell style={{ color: 'white' }}>{result.price}</TableCell>
-                  </TableRow>
-                ))}
-              </Table>
-            )}
+          {queryp.length > 0 && Array.isArray(availableProducts.products) && availableProducts.products.length > 0 && (
+      <Table>
+      {availableProducts.products.map((result, index) => (
+        <TableRow
+          key={result.id}
+          tabIndex={index + 1}
+          data-index={index}
+          onClick={() => handleProductSelect(result)}
+        >
+          <TableCell style={{ color: 'white' }}>{capitalizeFirstLetter(result.name)}</TableCell>
+          <TableCell style={{ color: 'white' }}>{capitalizeFirstLetter(result.description)}</TableCell>
+          <TableCell style={{ color: 'white' }}>$ {result.price}</TableCell>
+          <TableCell style={{ color: 'white' }}>Cant {result.quantity}</TableCell>
+        </TableRow>
+      ))}
+    </Table>
+      )}
           <div style={{ color: 'white' }}>
             <ErrorMessage message={availableProducts.products.message} show={searchError} />
           </div>
@@ -252,7 +211,7 @@ const handleProductSelect = (product) => {
             label="Producto"
             variant="outlined"
             fullWidth
-            value={product.name}
+            value={productName}
            
           />
         </Grid>
@@ -261,6 +220,7 @@ const handleProductSelect = (product) => {
         <Grid item xs={12} md={2}>
           <TextField
             label="Precio"
+            type="number"
             variant="outlined"
             fullWidth
             value={selectedProductPrice}
