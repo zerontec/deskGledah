@@ -117,11 +117,13 @@ useEffect(() => {
 <Logout/>
       <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
         <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>
-          <Box
+          {/* <Box
             component="img"
-            src="/assets/illustration_avatar.png"
+            src="/assets/logoinst.png"
             sx={{ width: 100, position: 'absolute', top: -50 }}
-          />
+          /> */}
+
+          <Logo/>
 
           {/* <Box sx={{ textAlign: 'center' }}>
             <Typography gutterBottom variant="h6">
