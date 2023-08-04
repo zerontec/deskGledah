@@ -87,8 +87,24 @@ const generatePDF = () => {
     return;
   }
 
+  // Crear un nuevo documento PDF con tamaño "letter" (8.5 x 11 pulgadas)
+  // eslint-disable-next-line new-cap
+  const doc = new jsPDF('portrait', 'pt', 'letter');
+
+  // Configurar propiedades del documento
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor('#000000');
+
+  // Agregar el membrete al PDF
+  const companyName = 'Almacenes Amar, C.A';
+  const companyAddress = 'Av Antonio Paez San Felix ';
+  doc.text(companyName, 50, 30);
+  doc.text(companyAddress, 50, 50);
+
+  // Recorrer los reportes y agregar el contenido al PDF
   reportes.reports.forEach((item) => {
-    const { date, totalSales, paymentTotals , creditSales} = item;
+    const { date, totalSales, paymentTotals, creditSales } = item;
 
     // Verificar si paymentTotals es una cadena de texto válida
     if (typeof paymentTotals === 'string') {
@@ -98,34 +114,24 @@ const generatePDF = () => {
 
         // Verificar si paymentTotalsObj es un objeto válido
         if (typeof paymentTotalsObj === 'object' && paymentTotalsObj !== null) {
-          // Crear un nuevo documento PDF con tamaño "letter" (8.5 x 11 pulgadas)
-          // eslint-disable-next-line new-cap
-          const doc = new jsPDF('portrait', 'pt', 'letter');
-
-          // Configurar propiedades del documento
-          doc.setFontSize(12);
-          doc.setFont('helvetica', 'normal');
-          doc.setTextColor('#000000');
-
           // Centrar el contenido en el documento
           const pageWidth = doc.internal.pageSize.getWidth();
           const textWidth = doc.getStringUnitWidth(`Fecha: ${date}`) * doc.internal.getFontSize();
           const textX = (pageWidth - textWidth) / 2;
 
           // Agregar el contenido al PDF
-          doc.text(`Fecha: ${date}`, textX, 50);
-          doc.text(`Total de Ventas: $${formatAmountB(totalSales)}`, textX, 70);
-          
-          doc.text(`Total Ventas a Credito: $${formatAmountB(creditSales)}`, textX, 80);
+          doc.text(`Fecha: ${date}`, textX, 100);
+          doc.text(`Total de Ventas: $${formatAmountB(totalSales)}`, textX, 120);
+          doc.text(`Total Ventas a Crédito: $${formatAmountB(creditSales)}`, textX, 140);
 
-          let yPos = 100;
+          let yPos = 160;
           Object.entries(paymentTotalsObj).forEach(([method, amount]) => {
             doc.text(`${capitalizeFirstLetter(method)}: ${formatAmountB(amount)}`, textX, yPos);
             yPos += 20;
           });
 
-          // Guardar el documento PDF
-          doc.save('resumen_cierre_ventas.pdf');
+          // Agregar un salto de página después de cada reporte
+          doc.addPage();
         } else {
           // El objeto paymentTotalsObj no es válido
           console.error('El objeto paymentTotalsObj no es válido:', paymentTotalsObj);
@@ -139,8 +145,10 @@ const generatePDF = () => {
       console.error('paymentTotals no es una cadena de texto válida:', paymentTotals);
     }
   });
-};
 
+  // Guardar el documento PDF
+  doc.save('resumen_cierre_ventas.pdf');
+};
 
 
 
