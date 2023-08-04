@@ -13,7 +13,7 @@ const GET_ALL_EXPENSE = 'GET_ALL_PRODUCTS'
 const UPDATE_EXPENSE ='UPDATE_PRODUCT'
 const DELETE_EXPENSE ='DELETE_PRODUCT'
 
-
+const GET_ALL_MONTLY_EXPENSE ='GET_ALL_MONTLY_EXPENSE'
 
 export const fetchExpenseRequest = () => ({
     type: FETCH_EXPENSE_REQUEST,
@@ -46,12 +46,12 @@ export const fetchExpenseRequest = () => ({
   
     export const createExpense = (formInfo) => async (dispatch) => {
       try {
-        const response = await axios.post(`${API_URL_D}api/expenses/create`, formInfo,{ headers: authHeader() });
+        const  {data}= await axios.post(`${API_URL_D}api/expenses/create`, formInfo,{ headers: authHeader() });
         dispatch({
           type: CREATE_EXPENSE,
-          payload: response.data,
+          payload: data,
         });
-        return response.data;
+        return data;
       } catch (error) {
         if (error.response && error.response.status === 409) {
           throw new Error("El código ya existe. Ingrese otro.");
@@ -60,10 +60,27 @@ export const fetchExpenseRequest = () => ({
       }
     };
 
+
+    
    
+
    
     
+   export const getMonthlyExpenses  =() =>async (dispatch)=>{
     
+    try {
+       const resp = await axios.get(`${API_URL_D}api/expenses/get-montly-expenses `,{ headers: authHeader() });
+ 
+       dispatch({
+         type: GET_ALL_MONTLY_EXPENSE,
+         payload: resp.data,
+       });
+       return resp.data
+     } catch (err) {
+       return err.response;
+     }
+   };
+ 
     
     
     
@@ -139,6 +156,14 @@ export const fetchExpenseRequest = () => ({
           ...state,
           expenses: action.payload,
         };
+   
+
+          case GET_ALL_MONTLY_EXPENSE:
+            return {
+              ...state,
+              expenses: action.payload,
+            };
+  
   
 
 

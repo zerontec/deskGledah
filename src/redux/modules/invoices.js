@@ -52,8 +52,7 @@ export const fetchInvoices = (query) => async (dispatch) => {
   
       return resp.data;
     } catch (err) {
-      console.error('Error fetching invoices:', err);
-      throw err.response;
+      return err.response;
     }
   };
   

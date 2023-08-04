@@ -209,22 +209,22 @@ export const getLoanBySeller=({id}) => async (dispatch) => {
 };
 
 
-export const getAllPayment=() => async (dispatch) => {
+// export const getAllPayment=() => async (dispatch) => {
 
-  try {
-    const response = await axios.get(`${API_URL_D}api/loan/get-all-payment`,{ headers: authHeader() }
-    );
+//   try {
+//     const response = await axios.get(`${API_URL_D}api/loan/get-all-payment`,{ headers: authHeader() }
+//     );
   
-    dispatch({
-      type: SEARCH_DATE_SUCCESS,
-      payload: response.data,
-    });
-    return response.data;
-  } catch (error) {
-    dispatch(fetchLoanFailure(error.message));
-    return null
-  }
-};
+//     dispatch({
+//       type: SEARCH_DATE_SUCCESS,
+//       payload: response.data,
+//     });
+//     return response.data;
+//   } catch (error) {
+//     dispatch(fetchLoanFailure(error.message));
+//     return null
+//   }
+// };
 
 
 
