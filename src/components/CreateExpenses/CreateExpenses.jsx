@@ -7,7 +7,8 @@ import Box from '@mui/material/Box';
 import Swal from 'sweetalert2';
 import numeral from 'numeral';
 import { Button, TextField, Alert } from '@mui/material';
-import { createExpense } from '../../redux/modules/expenses';
+import { createExpense, getAllExpense } from '../../redux/modules/expenses';
+import { getWeeklyExpenses } from '../../redux/modules/ExpenseWeek';
 
 
 
@@ -53,7 +54,11 @@ const CreateExpenses = () => {
 	  montoPagado: '',
 	  fechaPago: '',
 	});
-  
+	const [valoresDolar, setValoresDolar] = useState({});
+
+
+
+
 	const formatAmountB = (amount) => numeral(amount).format('0,0.00');
 
 	const [errors, setErrors] = useState({});
@@ -62,85 +67,161 @@ const CreateExpenses = () => {
 	console.log('mensaje', message);
   
 	const [formInfo, setFormInfo] = useState({
-	  concepto: '',
-	  monto: '',
-	  fecha: '',
-	});
+		concepto: '', // Inicializar como una cadena vacía en lugar de undefined
+		monto: '', // Inicializar como una cadena vacía en lugar de undefined
+		// fecha: '', // Inicializar como una cadena vacía en lugar de undefined
+		// montoDolar: 0,
+	  });
+	  
 	const [isFormValid, setIsFormValid] = useState(false);
   
-	const validateForm = () => {
-	  const { concepto, monto, fecha } = formInfo;
-	  setIsFormValid(concepto.trim() !== '' && monto.trim() !== '' && fecha.trim() !== '');
-	};
+	// const validateForm = () => {
+	//   const { concepto, monto, } = formInfo;
+	//   setIsFormValid(concepto.trim() !== '' && monto.trim() !== '' );
+	// };
   
+	const validateForm = () => {
+		const { concepto, monto } = formInfo;
+		setIsFormValid(concepto !== '' && monto !== ''); // Verificar si los campos tienen contenido
+	  };
+	
 	useEffect(() => {
 	  validateForm();
 	}, [formInfo]);
   
 	function validate(formInfo) {
-	  const errors = {};
-	  formInfo.concepto ? (errors.concepto = '') : (errors.proveedor = 'Ingrese proveedor ');
-	  formInfo.monto ? (errors.monto = '') : (errors.montoPagado = 'Ingrese Monto');
-	  formInfo.fecha ? (errors.fecha = '') : (errors.fecha = 'Ingrese una Fecha');
-  
-	  return errors;
-	}
+		const errors = {};
+		if (!formInfo.concepto.trim()) errors.concepto = 'Ingrese concepto';
+		if (!formInfo.monto.trim()) errors.monto = 'Ingrese monto';
+		// if (!formInfo.fecha.trim()) errors.fecha = 'Ingrese una fecha';
+	  
+		return errors;
+	  }
   
 	const dispatch = useDispatch();
   
-	const handleChange = (event) => {
-	  const { name, value } = event.target;
-	  setFormInfo((prevFormInfo) => ({
-		...prevFormInfo,
-		[name]: value,
-	  }));
-	  setErrors(validate({ ...formInfo, [name]: value }));
-  
+const handleChange = (event) => {
+  const { name, value } = event.target;
+  setFormInfo((prevFormInfo) => ({
+    ...prevFormInfo,
+    [name]: value,
+  }));
+};
+	const fetchDolarValue = async () => {
+		try {
+		  const response = await fetch('https://expressjs-postgres-production-bd69.up.railway.app/api/consulta/dolar');
+		  const data = await response.json();
 	
-	};
+		  // Convertir los valores a números utilizando parseFloat
+		  const bcv = data.bcv;
+		  const enparalelovzla = data.enparalelovzla;
+		  // ...
+	
+		  setValoresDolar({
+			bcv,
+			enparalelovzla,
+			// ...
+		  });
+		} catch (error) {
+		  console.error('Error al obtener los datos del dólar:', error);
+		}
+	  };
+
+	  useEffect(() => {
+		// Realiza la consulta inicial al cargar el componente
+		fetchDolarValue();
+	
+		// Configura un intervalo para realizar consultas periódicas cada cierto tiempo
+		const interval = setInterval(fetchDolarValue, 12 * 60 * 60 * 1000); // Consulta cada 12 horas
+	
+		// Limpia el intervalo cuando el componente se desmonta
+		return () => {
+		  clearInterval(interval);
+		};
+	  }, []);
+	
+
+
+	  const [numericValue, setNumericValue] = useState(0);
+	  const [nformattedValue, setNformattedValue] = useState('');
+	
+	  useEffect(() => {
+		if (valoresDolar && valoresDolar.bcv) {
+		  const value = valoresDolar.bcv;
+		  const numericValue = parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.'));
+		  const formattedValue = numericValue.toLocaleString(undefined, { minimumFractionDigits: 3 });
+	
+		  setNumericValue(numericValue);
+		  setNformattedValue(formattedValue);
+		} else {
+		  console.log('El valor de bcv no está definido');
+		}
+	  }, [valoresDolar]);
   
+console.log("bcv", nformattedValue)
+console.log("monto", formInfo.monto)
+const montoPagadoNumber = parseFloat(formInfo.monto); // Convertir a número
+console.log("montoPagado", montoPagadoNumber)	  
+const toNumNForm= parseFloat(nformattedValue) 
+const gastoDolar = montoPagadoNumber / toNumNForm
+console.log("gasto Dolar", gastoDolar)
+
+
+useEffect(()=>{
+
+	dispatch(getAllExpense())
+
+
+}, [dispatch])
+
+
 	const handleSubmit = (event) => {
 	  event.preventDefault();
-	  const montoPagadoNumber = parseFloat(formInfo.montoPagado); // Convertir a número
+	  const montoPagadoNumber = parseFloat(formInfo.monto); // Convertir a número
+	  
 	  const data = {
 		concepto: formInfo.concepto,
 		monto: formInfo.monto,
 		fecha: formInfo.fecha,
+		montoDolar:gastoDolar
 		
 	  };
   
-	  setLoading(true);
-	  dispatch(createExpense(data))
-		.then((response) => {
-		  setLoading(false);
-		  Swal.fire('Gasto  creado con éxito!', '', 'success');
-		  window.location.reload();
-		  setFormInfo({
-			proveedor: '',
-			montoPagado: '',
-			fechaPago: '',
-		  });
-		  setSelectButton(null);
-		  if (response.error) {
-			setMessageError(response.error);
-		  }
-		})
-		.catch((error) => {
-		  if (error.response && error.response.status === 400) {
-			const errorMessage = error.response.data.message;
-			Swal.fire({
-			icon: 'error',
-  
-			title: 'Error',
-			text: errorMessage,
+	  const errors = validate(formInfo);
+	  setErrors(errors);
+	  if (Object.keys(errors).length === 0) {
+		setLoading(true);
+		dispatch(createExpense(data))
+		  .then((response) => {
+			setLoading(false);
+			Swal.fire('Gasto creado con éxito!', '', 'success');
+			// window.location.reload();
+			dispatch(getAllExpense())
+			dispatch(getWeeklyExpenses())
+			setFormInfo({
+			  proveedor: '',
+			  montoPagado: '',
+			  fechaPago: '',
 			});
-		  } else {
-			console.error('Error al generar a intentar agregar abono:', error);
-		  }
+			setSelectButton(null);
+			if (response.error) {
+			  setMessageError(response.error);
+			}
+		  })
+		  .catch((error) => {
+			if (error.response && error.response.status === 400) {
+			  const errorMessage = error.response.data.message;
+			  Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: errorMessage,
+			  });
+			} else {
+			  console.error('Error al generar a intentar agregar abono:', error);
+			}
 		  });
+	  }
 	};
-
-
 
 
 
@@ -191,7 +272,7 @@ const CreateExpenses = () => {
 				  {errors.concepto && <span className="error-message"> {errors.concepto}</span>}
 				  <TextField
 					required
-					label="Monto "
+					label="Monto Bs"
 					name="monto"
 					type="number"
 					id="monto"
