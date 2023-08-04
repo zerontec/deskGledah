@@ -138,7 +138,7 @@ const SearchSaleByDate = () => {
             </SearchButton>
           </FormContainer>
 		  <Typography variant="h4" component="h1" >
-Total Ventas {resp}
+Total Ventas $ {resp}
       </Typography>
 
           <Snackbar
