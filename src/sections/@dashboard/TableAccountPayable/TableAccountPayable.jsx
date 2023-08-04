@@ -323,12 +323,12 @@ fetchData();
 					checked={selectedProducts.includes(items.id)}
 					onChange={() => handleToggleSelect(items.id)}
 				  /> */}
-						<TableCell align="left"> {items.purchase.invoiceNumber}</TableCell>
+						<TableCell align="left"> {items?.purchase.invoiceNumber}</TableCell>
 						<TableCell align="left"> {capitalizeFirstLetter (items.supplierName)}</TableCell>
-						<TableCell align="left"> {items.supplierRif}</TableCell>
-						<TableCell align="left"> {capitalizeFirstLetter(formatAmountB(items.amount))}</TableCell>
-						<TableCell align="left"> {formatAmountB(items.abonos)}</TableCell>
-						<TableCell align="left"> {formatAmountB(items.saldoPendiente)}</TableCell>
+						<TableCell align="left"> {items?.supplierRif}</TableCell>
+						<TableCell align="left"> {capitalizeFirstLetter(formatAmountB(items?.amount))}</TableCell>
+						<TableCell align="left"> {formatAmountB(items?.abonos)}</TableCell>
+						<TableCell align="left"> {formatAmountB(items?.saldoPendiente)}</TableCell>
 						<TableCell align="left"> {fDateTime(items.createdAt)}</TableCell>
 						
 						{/* <TableCell align="left"> {items.defectuosos}</TableCell> */}

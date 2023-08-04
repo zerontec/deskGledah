@@ -15,6 +15,7 @@ import Box from "@mui/material/Box";
 import {  Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
+import { jsPDF } from "jspdf";
 
 import Swal from "sweetalert2";
 import Modal from "@mui/material/Modal";
@@ -117,7 +118,6 @@ const columns = [
 
 
 
-
 // eslint-disable-next-line arrow-body-style
 const TablePurchases = () => {	
 	
@@ -183,10 +183,7 @@ const handleEditClick = (purchase) => {
 	  if (result.isConfirmed) {
 		dispatch(deletePurchase(items.id));
 		Swal.fire("La compra ha sido borrado!");
-
-		setTimeout(() => {
-		  window.location.reload();
-		}, 500);
+		dispatch(getAllPurchases())
 	  } else {
 		Swal.fire("La compra  Esta Seguro !");
 	  }
@@ -260,6 +257,94 @@ const handleEditClick = (purchase) => {
   };
 
 
+  const generatePDF = () => {
+	if (!selectedPurchase) {
+	  return;
+	}
+  
+	const {productDetails,supplierAddress,totalAmount,supplierName,supplierRif, invoiceNumber, credit, status, clienteData, vendedorData, productoFactura, totalProductosSinIva, ivaTotal, amount, metodoPago, createdAt } = selectedPurchase;
+  
+	// Crear un nuevo documento PDF
+	// eslint-disable-next-line new-cap
+	const doc = new jsPDF();
+  
+	  // Agregar el membrete al PDF
+	  const companyName = 'Galeria Amar, C.A';
+	  const companyAddress = 'Av Antonio Paez San Felix ';
+	  doc.text(companyName, 20, 10);
+	  doc.text(companyAddress, 20, 18);
+	
+  
+	  	// Agregar la fecha de la factura
+	doc.setFontSize(12);
+	doc.text(`Fecha de Factura: ${fDateTime(createdAt)}`, 20, 28);
+  
+	// Agregar el número de factura
+	doc.setFontSize(12);
+	doc.text(`Número de Factura Compra: ${invoiceNumber}`, 20, 35);
+	doc.text(`Proveedor: ${supplierName}`, 20, 42);
+	doc.text(`Rif: ${supplierRif}`, 20, 49);
+	doc.text(`Dirección: ${supplierAddress}`, 20, 55);
+  
+
+
+
+
+	// Agregar los datos generales de la factura
+	// doc.setFontSize(12);
+	// doc.text(`Factura a crédito: ${credit ? 'Sí' : 'No'}`, 20, 40);
+	// doc.text(`Estado: ${status}`, 20, 50);
+	// doc.text(`Cliente: ${clienteData.name}`, 20, 60);
+	// doc.text(`Cédula o Rif: ${clienteData.identification}`, 20, 70);
+	// doc.text(`Código Vendedor: ${vendedorData?.codigo}`, 20, 80);
+	// doc.text(`Nombre Vendedor: ${vendedorData?.name}`, 20, 90);
+  
+	// Agregar la lista de productos
+	doc.setFontSize(14);
+	doc.text('Lista de Productos:', 20, 110);
+  
+	let y = 120;
+	doc.setFontSize(12);
+	doc.text('Código', 20, y);
+	doc.text('Producto', 60, y);
+	doc.text('Descripción', 100, y);
+	doc.text('Cantidad', 135, y);
+	doc.text('Costo', 160, y);
+	doc.text('Precio Venta', 180, y);
+  
+	y += 10;
+	productDetails.forEach((product) => {
+	  doc.text(product.barcode.toString(), 20, y);
+	  doc.text(product.name.toString(), 60, y);
+	  doc.text(product.description, 100, y);
+	  doc.text(product.cantidad.toString(), 135, y);
+	  doc.text(product.costo.toString(), 160, y);
+	  doc.text(product.price.toString(), 180, y);
+	  
+	 
+	  y += 10;
+	});
+  
+	// // Agregar los totales
+	doc.setFontSize(12);
+	doc.text(`Total Producto:$ ${totalAmount.toString()}`, 20, y + 20);
+	// doc.text(`Iva 16%: ${ivaTotal.toString()}`, 20, y + 30);
+	// doc.text(`Total más Iva: ${amount.toString()}`, 20, y + 40);
+  
+	// Agregar los métodos de pago
+	// doc.setFontSize(14);
+	// doc.text('Métodos de Pago:', 20, y + 60);
+  
+	// y += 70;
+	// doc.setFontSize(12);
+	// metodoPago.forEach((metodo, index) => {
+	//   doc.text(`Método ${index + 1}: ${metodo.method}`, 20, y + index * 10);
+	//   doc.text(`Monto: ${metodo.amount.toFixed(2)}`, 60, y + index * 10);
+	// });
+  
+	// Guardar el documento PDF
+	doc.save('ResumenCompra.pdf');
+  };
 	
 return(	<>
 
@@ -337,6 +422,11 @@ return(	<>
 			>
 			  Cerrar
 			</Button>
+
+			
+			<Button variant="contained" onClick={generatePDF} style={{marginLeft:10, backgroundColor:'red'}}>
+          Generar PDF
+        </Button>
 		  </>
 		)}
 	  </Box>
@@ -529,13 +619,9 @@ return(	<>
 
 					<TableCell className="tableCell">
 					
-					  <div
-						className="deleteButton"
-						id={items.id}
-						onClick={() => deleteHandler(items)}
-					  >
-					  <Button>Borrar</Button>
-					  </div>
+					  <Button variant='contained' style={{backgroundColor:"red"}} id={items.id}
+						onClick={() => deleteHandler(items)}>Borrar</Button>
+					
 					</TableCell>
 
 				  </>

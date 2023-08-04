@@ -25,10 +25,10 @@ import Swal from 'sweetalert2';
 
 
 import styled, { css } from 'styled-components';
-import { jsPDF } from "jspdf";
 import { fDateTime } from '../../../utils/formatTime';
 import { deleteExpense, getAllExpense, updateExpense } from '../../../redux/modules/expenses';
 import { CreateExpenses } from '../../../components/CreateExpenses';
+import { getWeeklyExpenses } from '../../../redux/modules/ExpenseWeek';
 
 const FormContainer = styled.form`
   display: flex;
@@ -60,14 +60,20 @@ const columns = [
 
 	{
 	  id: "name",
-	  label: "Monto",
+	  label: "Concepto",
 	  minWidth: 100,
 	},
 	{
 		id: "id",
-		label: "Ver",
+		label: "Monto en Bolivares",
 		minWidth: 50,
 	  },
+    {
+      id: "id",
+      label: "Monto en Dolares",
+      minWidth: 50,
+      },
+  
 
   ];
 
@@ -81,8 +87,12 @@ const TableExpenses = () => {
 	const dispatch = useDispatch();
 	const [selectedExpenses, setSelectedexpenses] = useState(null)
 	const [selectedExpensesId, setSelectedExpensesId] = useState(null)
-
 	const [open, setOpen] = useState(false);
+	const [valoresDolar, setValoresDolar] = useState({});
+
+
+
+
 
 
 	useEffect(() => {
@@ -128,7 +138,66 @@ const TableExpenses = () => {
 		concepto: '',
 		monto: '',
 		fecha: '',
+    montoDolar:0
 	  });
+
+
+    const fetchDolarValue = async () => {
+      try {
+        const response = await fetch('https://expressjs-postgres-production-bd69.up.railway.app/api/consulta/dolar');
+        const data = await response.json();
+    
+        // Convertir los valores a números utilizando parseFloat
+        const bcv = data.bcv;
+        const enparalelovzla = data.enparalelovzla;
+        // ...
+    
+        setValoresDolar({
+        bcv,
+        enparalelovzla,
+        // ...
+        });
+      } catch (error) {
+        console.error('Error al obtener los datos del dólar:', error);
+      }
+      };
+  
+      useEffect(() => {
+      // Realiza la consulta inicial al cargar el componente
+      fetchDolarValue();
+    
+      // Configura un intervalo para realizar consultas periódicas cada cierto tiempo
+      const interval = setInterval(fetchDolarValue, 12 * 60 * 60 * 1000); // Consulta cada 12 horas
+    
+      // Limpia el intervalo cuando el componente se desmonta
+      return () => {
+        clearInterval(interval);
+      };
+      }, []);
+    
+  
+  
+      const [numericValue, setNumericValue] = useState(0);
+      const [nformattedValue, setNformattedValue] = useState('');
+    
+      useEffect(() => {
+      if (valoresDolar && valoresDolar.bcv) {
+        const value = valoresDolar.bcv;
+        const numericValue = parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.'));
+        const formattedValue = numericValue.toLocaleString(undefined, { minimumFractionDigits: 3 });
+    
+        setNumericValue(numericValue);
+        setNformattedValue(formattedValue);
+      } else {
+        console.log('El valor de bcv no está definido');
+      }
+      }, [valoresDolar]);
+    
+
+useEffect(()=>{
+
+  dispatch(getAllExpense())
+}, [dispatch])
 
 
 	  const handleEditClick = (expense) => {
@@ -137,9 +206,20 @@ const TableExpenses = () => {
 		  concepto: expense.concepto,
 		 monto: expense.monto,
 		  fecha: expense.fecha,
+      montoDolar:gastoDolar
 		});
 		setOpen(true);
 	  };
+
+    console.log("bcv", nformattedValue)
+    console.log("monto", selectedExpenseEdit.monto)
+    const montoPagadoNumber = parseFloat(selectedExpenseEdit.monto); // Convertir a número
+    console.log("montoPagado", montoPagadoNumber)	  
+    const toNumNForm= parseFloat(nformattedValue) 
+    const gastoDolar = montoPagadoNumber / toNumNForm
+    console.log("gasto Dolar", gastoDolar)
+    
+  
 
 	const handleSubmit = (e) => {
 		if (selectedExpenseEdit.concepto&& selectedExpenseEdit.monto && selectedExpenseEdit.fecha) {
@@ -148,6 +228,7 @@ const TableExpenses = () => {
 		  const data = {
 			...selectedExpenseEdit,
 			id: selectedExpensesId,
+      // montoDolar:gastoDolar
 		  };
 		  dispatch(updateExpense(selectedExpensesId, data));
 		  Swal.fire('¨Gasto  Editado con Exito  !', 'You clicked the button!', 'success');
@@ -180,10 +261,9 @@ const TableExpenses = () => {
 		  if (result.isConfirmed) {
 			dispatch(deleteExpense(items.id));
 			Swal.fire('El gasto ha sido borrado!');
-	
-			setTimeout(() => {
-			  window.location.reload();
-			}, 500);
+        dispatch(getAllExpense())
+        dispatch(getWeeklyExpenses())
+		
 		  } else {
 			Swal.fire('El gasto  Esta Seguro !');
 		  }
@@ -231,12 +311,16 @@ const handleCloseModal = () => {
           {capitalizeFirstLetter(selectedExpenses.concepto)}
         </p>
         <p>
-          <strong>Monto:</strong>
-          {selectedExpenses.monto}
+          <strong>Monto Bs:</strong>
+          {formatAmountB (selectedExpenses.monto)}
+        </p>
+        <p>
+          <strong>Monto $:</strong>
+          {formatAmountB (selectedExpenses.montoDolar)}
         </p>
         <p>
           <strong>Fecha:</strong>
-          {fDateTime(selectedExpenses.fecha)}
+          {fDateTime(selectedExpenses.createdAt)}
         </p>
       
      
@@ -272,7 +356,7 @@ const handleCloseModal = () => {
             p: 4,
           }}
         >
-          <h2>Editar Producto</h2>
+          <h2>Editar Gasto</h2>
           {selectedExpenseEdit && (
             <form
               onSubmit={(e) => {
@@ -313,6 +397,18 @@ const handleCloseModal = () => {
 						setSelectedExpenseEdit({
                         ...selectedExpenseEdit,
                         monto: e.target.value,
+                      })
+                    }
+                  />
+
+<TextField
+                    label="Monto Dolares"
+                    name="montod"
+                    value={selectedExpenseEdit.montoDolar}
+                    onChange={(e) =>
+						setSelectedExpenseEdit({
+                        ...selectedExpenseEdit,
+                        montoDolar: e.target.value,
                       })
                     }
                   />
@@ -395,8 +491,9 @@ const handleCloseModal = () => {
 
             
               <TableRow key={item.id} >
-                <TableCell align="left">{item.concepto}</TableCell>
-                <TableCell align="left">{item.monto}</TableCell>
+                <TableCell align="left">{item?.concepto}</TableCell>
+                <TableCell align="left">Bs {formatAmountB(item?.monto)}</TableCell>
+                <TableCell align="left">$ {formatAmountB(item?.montoDolar)}</TableCell>
              
                 <>
                       <TableCell className="tableCell">
@@ -408,19 +505,11 @@ const handleCloseModal = () => {
                         </Button>
                       </TableCell>
 
-					  <TableCell className="tableCell">
-                        <Button
-                          variant="contained"
-                          onClick={() => handleEditClick(item)}
-                        >
-                         Editar
-                        </Button>
-                      </TableCell>
 
 					  <TableCell className="tableCell">
-                          <div className="deleteButton" id={item.id} onClick={() => deleteHandler(item)}>
-                            <Button>Borrar</Button>
-                          </div>
+                          
+                            <Button variant='contained' style={{backgroundColor:"red", color:"white"}}     id={item.id} onClick={() => deleteHandler(item)}>Borrar</Button>
+                        
                         </TableCell>
                       
                     </>
@@ -459,8 +548,6 @@ const handleCloseModal = () => {
 	)
 };
 
-export const TableExpensesStl = styled.div``;
 
-TableExpenses.propTypes = {};
 
 export default TableExpenses;
