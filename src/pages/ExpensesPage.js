@@ -6,6 +6,7 @@ import {
   
   } from '@mui/material';
 
+  import { ExpenseTable } from '../components/ExpenseTable';
 
 
 import { FloatingButtonComponent } from '../components/FloatingButtonComponent';
@@ -37,6 +38,9 @@ const ExpensesPages =() => (
 <hr/>
 
 <TableExpenses/>
+
+
+<ExpenseTable/>
 
 <FloatingButtonComponent/>
 </>
