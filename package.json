@@ -1,6 +1,6 @@
 {
     "name": "gledah",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "Sistema Facturacion y Administracion ",
     "main": "public/electron.js",
     "homepage": "./",
@@ -20,13 +20,12 @@
         "re-start": "rm -rf build node_modules && yarn install && yarn start",
         "re-build": "rm -rf build node_modules && yarn install && yarn build",
         "preelectron-pack": "yarn build",
-        "startn": "nodemon -L",
         "wdio": "wdio run wdio.conf.js"
     },
     "build": {
         "appId": "com.gledah",
         "directories": {
-            "buildResources": "assets2"
+            "buildResources": "assets"
         },
         "win": {
             "target": "NSIS",
@@ -36,22 +35,23 @@
             {
                 "provider": "github",
                 "owner": "zerontec",
-                "repo": "https://github.com/zerontec/front-muneca",
-                "private": false
+                "repo": "deskGledah"
             }
         ],
         "files": [
-            "src/backend/**/*",
+            "backend/**/*",
             "build/**/*",
             "node_modules/**/*",
-            "package.json"
+            "package.json",
+            "src/assets",
+            "public/assets"
         ],
         "asar": true
     },
     "author": "Zeron Tecnologia <devsignweb@gmail.com> ",
     "license": "ISC",
     "assets": [
-        "assets2"
+        "assets"
     ],
     "eslintConfig": {
         "extends": [
@@ -84,6 +84,7 @@
         "@mui/lab": "^5.0.0-alpha.103",
         "@mui/material": "^5.11.10",
         "@railway/cli": "^3.3.1",
+        "@react-pdf/render": "^3.2.6",
         "@react-pdf/renderer": "^3.1.12",
         "antd": "^5.6.1",
         "apexcharts": "^3.37.0",
@@ -97,7 +98,9 @@
         "cors": "^2.8.5",
         "date-fns": "^2.30.0",
         "dotenv": "^16.3.1",
+       
         "electron-is-dev": "^2.0.0",
+        "electron-log": "^4.4.8",
         "electron-updater": "^6.1.1",
         "express": "^4.16.4",
         "express-validator": "^6.0.0",
@@ -148,9 +151,9 @@
         "@wdio/mocha-framework": "^8.12.1",
         "@wdio/spec-reporter": "^8.12.2",
         "chromedriver": "^115.0.0",
-        "electron": "^25.3.1",
         "electron-builder": "^23.6.0",
         "electron-is-dev": "^2.0.0",
+        "electron": "^25.3.1",
         "eslint": "^8.34.0",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-config-prettier": "^8.6.0",
