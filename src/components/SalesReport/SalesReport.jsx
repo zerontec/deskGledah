@@ -77,7 +77,7 @@ const SalesReport = () => {
   return (
     <div>
       <Button variant="contained" onClick={generateSummary}>
-        Generar Cierre
+        Generar Cierre Caja
       </Button>
 
       <TableContainer component={Paper}>
