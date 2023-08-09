@@ -222,6 +222,7 @@ const SearchProduct = ({
             label="Precio"
             type="number"
             variant="outlined"
+            inputMode="decimal"
             fullWidth
             value={selectedProductPrice}
             onChange={handlePriceChange}
@@ -232,6 +233,7 @@ const SearchProduct = ({
           <TextField
             label="Cantidad"
             type="number"
+            inputMode="decimal"
             variant="outlined"
             ref={quantityRef}
             fullWidth
