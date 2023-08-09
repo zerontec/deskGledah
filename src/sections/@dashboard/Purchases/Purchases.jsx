@@ -722,7 +722,7 @@ const Purchases = () => {
             <TextField
               label="Código"
               variant="outlined"
-              value={formValuesP.barcode || manualProductData.barcode.toUpperCase() || ''}
+              value={formValuesP.barcode || manualProductData.barcode|| ''}
               onChange={(event) =>
                 setManualProductData({
                   ...manualProductData,
@@ -792,6 +792,7 @@ const Purchases = () => {
             <TextField
               label="Cantidad"
               type="number"
+              inputMode="decimal"
               variant="outlined"
               value={formValuesP.cantidad}
               onChange={handleProductQuantityChange}
@@ -802,6 +803,7 @@ const Purchases = () => {
             <TextField
               label="Costo"
               type="number"
+              inputMode="decimal"
               variant="outlined"
               value={formValuesP.costo}
               onChange={handleProductCostoChange}
@@ -823,6 +825,7 @@ const Purchases = () => {
               label="Precio de Venta"
               variant="outlined"
               type="number"
+              inputMode="decimal"
               value={formValuesP.precioVenta}
               onChange={handlePrecioVenta}
               fullWidth
