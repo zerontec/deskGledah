@@ -22,7 +22,7 @@ import {
   TextField,
 
 } from '@mui/material';
-
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Swal from 'sweetalert2';
 import { fDateTime } from '../../../utils/formatTime';
 import { SearchInvoiceByDate } from '../../../components/SearchInvoiceByDate';
@@ -337,7 +337,8 @@ const generatePDF = () => {
         </Button>
 
         <Button variant="contained" onClick={generatePDF} style={{marginLeft:10, backgroundColor:'red'}}>
-          Generar PDF
+          
+          Generar <PictureAsPdfIcon/>
         </Button>
       </>
     )}
