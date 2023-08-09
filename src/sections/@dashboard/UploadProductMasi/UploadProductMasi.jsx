@@ -154,6 +154,7 @@ const [messageError, setMessageError] = useState({});
         name="quantity"
         label="Cantidad"
         type='number'
+        inputMode="decimal"
         value={newProduct.quantity}
         onChange={handleInputChange}
       />
@@ -161,6 +162,7 @@ const [messageError, setMessageError] = useState({});
         name="costo"
         label="Costo"
         type='number'
+        inputMode="decimal"
         value={newProduct.costo}
         onChange={handleInputChange}
       />
@@ -168,6 +170,7 @@ const [messageError, setMessageError] = useState({});
         name="price"
         label="Precio Venta"
         type='number'
+        inputMode="decimal"
         value={newProduct.price}
         onChange={handleInputChange}
       />
