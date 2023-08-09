@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from "react-redux";
 import numeral from 'numeral';
 import { jsPDF } from "jspdf";
-
+import Modal from "@mui/material/Modal";
 import Paper from "@mui/material/Paper";
 import TablePagination from "@mui/material/TablePagination";
 
@@ -59,6 +59,7 @@ const TableClosure = () => {
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [searchTerm, setSearchTerm] = useState("");
   const [pdfGenerated, setPdfGenerated] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null)
 
   const dispatch = useDispatch();
 	
@@ -83,7 +84,7 @@ console.log("reportes", reportes)
 
 
 const generatePDF = () => {
-  if (!reportes.reports) {
+  if (!selectedReport) {
     return;
   }
 
@@ -97,14 +98,14 @@ const generatePDF = () => {
   doc.setTextColor('#000000');
 
   // Agregar el membrete al PDF
-  const companyName = 'Almacenes Amar, C.A';
+  const companyName = 'Galerias Amar, C.A';
   const companyAddress = 'Av Antonio Paez San Felix ';
   doc.text(companyName, 50, 30);
   doc.text(companyAddress, 50, 50);
 
   // Recorrer los reportes y agregar el contenido al PDF
-  reportes.reports.forEach((item) => {
-    const { date, totalSales, paymentTotals, creditSales } = item;
+ 
+    const { date, totalSales, paymentTotals, creditSales } = selectedReport;
 
     // Verificar si paymentTotals es una cadena de texto válida
     if (typeof paymentTotals === 'string') {
@@ -131,7 +132,7 @@ const generatePDF = () => {
           });
 
           // Agregar un salto de página después de cada reporte
-          doc.addPage();
+          // doc.addPage();
         } else {
           // El objeto paymentTotalsObj no es válido
           console.error('El objeto paymentTotalsObj no es válido:', paymentTotalsObj);
@@ -144,7 +145,7 @@ const generatePDF = () => {
       // paymentTotals no es una cadena de texto válida
       console.error('paymentTotals no es una cadena de texto válida:', paymentTotals);
     }
-  });
+
 
   // Guardar el documento PDF
   doc.save('resumen_cierre_ventas.pdf');
@@ -235,18 +236,27 @@ const generatePDF = () => {
                     ))}
                   </ul>
                 </TableCell>
-                <TableCell align="left">
-                  {/* Botón para generar el PDF */}
-                  {pdfGenerated ? (
-                    <Button variant="contained" disabled>
-                      PDF Generado
-                    </Button>
-                  ) : (
-                    <Button variant="contained" onClick={generatePDF}>
-                      Generar PDF
-                    </Button>
-                  )}
-                </TableCell>
+
+                <TableCell className="tableCell">
+                        <Button
+                          variant="contained"
+                          onClick={() => setSelectedReport(item)}
+                        >
+                          Seleccionar para Detalles 
+                        </Button>
+                      </TableCell>
+                      
+                {/* <TableCell align="left"> */}
+              {/* Botón para generar el PDF */}
+              {/* <Button
+                variant="contained"
+                onClick={() => generatePDF(item)}
+                disabled={item.pdfGenerated}
+              >
+                {item.pdfGenerated ? "PDF Generado" : "Generar PDF"}
+              </Button>
+            </TableCell> */}
+
               </TableRow>
             );
           })
@@ -271,6 +281,57 @@ const generatePDF = () => {
 
 
         </Box>
+
+
+        <Modal open={selectedReport !== null} onClose={() => setSelectedReport(null)}>
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 400,
+      maxHeight: '80vh',
+      overflowY: 'auto',
+      bgcolor: 'background.paper',
+      borderRadius: '8px',
+      boxShadow: 24,
+      p: 4,
+    }}
+  >
+    {selectedReport && (
+      <>
+        <h2>
+          <strong>Reporte de Cierre </strong>
+        </h2>
+
+        <h3><strong>Fecha de Reporte  </strong></h3>
+        <h3>{selectedReport?.date}</h3>
+      
+        <h3>
+          <strong>Total Reporte:</strong>
+         
+        </h3>
+
+        <h3>{selectedReport?.totalSales}</h3>
+        
+       <h3>Genrar Pdf para Detalles </h3>
+      
+        <Button variant="contained" onClick={() => setSelectedReport(null)}>
+          Cerrar
+        </Button>
+
+        <Button variant="contained" onClick={generatePDF} style={{marginLeft:10, backgroundColor:'red'}}>
+          Generar PDF
+        </Button>
+      </>
+    )}
+  </Box>
+</Modal>
+
+
+
+
         <FloatingButtonComponent />
       </>
     );
