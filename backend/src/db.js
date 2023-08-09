@@ -177,7 +177,10 @@ const {
   Expense,
   PaymentCuenta,
   LoanClient,
-  PaymentClient
+  PaymentClient,
+  InventoryInitial,
+  InventoryFinal,
+  InventoryChange
   
 } = sequelize.models;
 const ROLES = ["admin", "vendedor", "facturacion"];
@@ -214,6 +217,10 @@ LoanClient.hasMany(PaymentClient, { foreignKey: 'loanId' });
 Customer.hasMany(LoanClient, { foreignKey: 'customerId' });
 LoanClient.belongsTo(Customer, { foreignKey: 'customerId' });
 
+
+InventoryInitial.belongsTo(InventoryChange, { foreignKey: 'inventoryChangeId' });
+InventoryFinal.belongsTo(InventoryChange, { foreignKey: 'inventoryChangeId' });
+InventoryChange.belongsTo(Product, { foreignKey: 'productId' });
 // NotaDebito.belongsTo(DevolucionesCompras, {as: 'devolucionCompra',
 // foreignKey: 'numeroDevolucion'});
 

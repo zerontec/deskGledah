@@ -1,17 +1,9 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-const {
-  Inventory,
-  Purchase,
-  Store,
-  Supplier,
-  AccountPayable,
-  Product
-} = require('../db');
-const {
-  Op
-} = require('sequelize');
+const { Op } = require('sequelize');
+const {Expenses,InventoryChange,InvoiceFactura, Inventory, Purchase, Store, Supplier, AccountPayable, Product } = require('../db');
+
 
 // Obtener todos los productos del inventario
 const findAllProductsInventory = async (req, res, next) => {
@@ -454,6 +446,213 @@ const createInventoryMovement = async (req, res, next) => {
   }
 };
 
+// const registrarInventarioFinal = async () => {
+//   try {
+//     // Consultar la base de datos para obtener la cantidad de cada producto en el inventario actual
+//     const productosEnInventario = await Product.findAll({
+//       attributes: ['id', 'quantity'], // Obtener solo los campos 'id' y 'quantity'
+//     });
+
+//     // Registrar los valores de cantidad como inventario final en una tabla o colección
+//     await InventarioFinal.bulkCreate(
+//       productosEnInventario.map((producto) => ({
+//         productId: producto.id,
+//         cantidad: producto.quantity,
+//         fecha: new Date(),
+//       }))
+//     );
+
+//     console.log('Inventario Final registrado exitosamente');
+//   } catch (error) {
+//     console.error('Error al registrar el Inventario Final:', error);
+//   }
+// };
+
+
+const registrarInventarioInicial = async (req, res, next) => {
+  try {
+    // Consultar la base de datos para obtener la cantidad de cada producto en el inventario actual
+    const productosEnInventario = await Product.findAll({
+      attributes: ['id', 'quantity', 'barcode', 'name', 'costo', 'price'], // Obtener solo los campos 'id' y 'quantity'
+    });
+
+    // Registrar los valores de cantidad como cambios de inventario inicial en la tabla InventoryChange
+    await Promise.all(
+      productosEnInventario.map(async (producto) => {
+        await InventoryChange.create({
+          productId: producto.id,
+          quantityChange: producto.quantity,
+          costo:producto.costo,
+          barcode:producto.barcode,
+          price:producto.price,
+          name:producto.name,
+          type: 'initial', // Indicar que es un cambio inicial
+          createdAt: new Date(),
+        });
+      })
+    );
+    if(Promise){
+    res.status(200).json({message:'Inventario inicial  registrado Exitosamente '})
+    }else{
+      res.status(500).json({message:"Error al registrr inventario inicial "})
+
+    }
+    console.log('Inventario Inicial registrado exitosamente');
+  } catch (error) {
+    res.status(500).json(error)
+  }
+};
+
+const registrarInventarioFinal = async (req, res, next) => {
+  try {
+    // Consultar la base de datos para obtener la cantidad de cada producto en el inventario actual
+    const productosEnInventario = await Product.findAll({
+      attributes: ['id','barcode', 'name', 'quantity', 'costo', 'price'], // Obtener solo los campos 'id' y 'quantity'
+    });
+
+    // Registrar los valores de cantidad como cambios de inventario final en la tabla InventoryChange
+    await Promise.all(
+      productosEnInventario.map(async (producto) => {
+        await InventoryChange.create({
+          productId: producto.id,
+          costo:producto.costo,
+          barcode:producto.barcode,
+          name:producto.name,
+          price:producto.price,
+          quantityChange: producto.quantity,
+          type: 'final', // Indicar que es un cambio final
+          createdAt: new Date(),
+        });
+      })
+    );
+    if(Promise){
+      res.status(200).json({message:'Inventario Final  registrado Exitosamente '})
+      }else{
+        res.status(500).json({message:"Error al registrr inventario Final "})
+  
+      }
+      console.log('Inventario Final registrado exitosamente');
+    } catch (error) {
+      res.status(500).json(error)
+    }
+  };
+
+const showInventoriInitial = async(req, res, next)=>{
+
+  try{
+    const { fechaInicio, fechaFin } = req.params;
+    const inventarioInicial = await InventoryChange.findAll({
+      where: {
+        type: 'initial',
+        createdAt: {
+          [Op.between]: [fechaInicio, fechaFin],
+        },
+      },
+    });
+
+  
+
+    if(inventarioInicial){
+
+      return res.status(200).json({message:"Inventario Inicial de el mes ingresado ", inventarioInicial})
+
+    }
+
+ 
+      return res.status(404).json({messague:'no se Encontro Informacion '})
+
+    
+
+
+
+
+  }catch(error){
+
+    res.status(500).json(error)
+  }
+
+
+} 
+
+const realizarCierreMensual = async (req, res, next) => {
+  try {
+    const { fechaInicio, fechaFin } = req.params;
+
+    // Consultar el inventario inicial y final para el período especificado
+    const inventarioInicial = await InventoryChange.findAll({
+      where: {
+        type: 'initial',
+        createdAt: {
+          [Op.between]: [fechaInicio, fechaFin],
+        },
+      },
+    });
+
+    const inventarioFinal = await InventoryChange.findAll({
+      where: {
+        type: 'final',
+        createdAt: {
+          [Op.between]: [fechaInicio, fechaFin],
+        },
+      },
+    });
+
+    // Calcular el total de ventas para el período
+    const ventasTotales = await InvoiceFactura.sum('amount', {
+      where: {
+        date: {
+          [Op.between]: [fechaInicio, fechaFin],
+        },
+      },
+    }) || 0;
+
+    // Calcular el total de compras para el período
+    const comprasTotales = await Purchase.sum('totalAmount', {
+      where: {
+        createdAt: {
+          [Op.between]: [fechaInicio, fechaFin],
+        },
+      },
+    })|| 0;
+
+    // Calcular el total de gastos para el período
+    // const gastosTotales = await Expenses.sum('monto', {
+    //   where: {
+    //     createdAt: {
+    //       [Op.between]: [fechaInicio, fechaFin],
+    //     },
+    //   },
+    // })|| 0;
+
+    // Realizar otros cálculos y análisis necesarios
+    // ...
+
+    // Crear un objeto con la información del cierre
+    const cierreMensual = {
+      fechaInicio,
+      fechaFin,
+      inventarioInicial,
+      inventarioFinal,
+      ventasTotales,
+      comprasTotales,
+      // gastosTotales,
+      // Otros datos calculados
+    };
+
+    console.log('Cierre Mensual realizado exitosamente:', cierreMensual);
+   if(cierreMensual){
+   return res.status(200).json(cierreMensual); // Enviar la respuesta JSON al cliente
+   } 
+   // eslint-disable-next-line no-else-return
+   else{ return res.status(500).json({message:"Error al Generar Cierre Mensual "})
+   }
+  } catch (error) {
+    console.error('Error al realizar el Cierre Mensual:', error);
+    res.status(500).json({ error: 'Error al realizar el Cierre Mensual' }); // Enviar una respuesta de error al cliente
+  next(error)
+  }
+};
+
 
 module.exports = {
   findAllProductsInventory,
@@ -466,6 +665,10 @@ module.exports = {
   deleteMultipleProducts,
   editProduct,
   updateInventoryProduct,
-  getProductById
+  getProductById,
+  registrarInventarioInicial,
+  registrarInventarioFinal,
+  realizarCierreMensual,
+  showInventoriInitial
 
 };

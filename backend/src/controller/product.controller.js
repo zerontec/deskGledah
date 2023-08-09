@@ -723,7 +723,9 @@ const deleteProductP = async (req, res, next) => {
 // Controlador para obtener el inventario inicial y final
 const obtenerInventarioInicialYFinal = async (req, res, next) => {
   try {
-    const { fechaInicial, fechaFinal } = req.query;
+    const { fechaInicial, fechaFinal } = req.params;
+
+    console.log("fechas", fechaInicial, fechaFinal);
 
     // Consultar la base de datos para obtener la cantidad de cada producto en el inventario
     const productosEnInventario = await Product.findAll({
@@ -733,12 +735,13 @@ const obtenerInventarioInicialYFinal = async (req, res, next) => {
     // Consultar la base de datos para obtener las ventas totales en el período especificado
     const ventasTotales = await InvoiceFactura.sum('amount', {
       where: {
-        createdAt: {
-          $between: [fechaInicial, fechaFinal],
+        date: {
+          [Op.between]: [fechaInicial,fechaFinal ],
+        
         },
       },
-    });
-
+    })
+console.log("ventas totales ", ventasTotales)
     // Consultar la base de datos para obtener las ventas por producto en el período especificado
     // const ventasPorProducto = await InvoiceFactura.findAll({
     //   attributes: [
@@ -761,7 +764,7 @@ const obtenerInventarioInicialYFinal = async (req, res, next) => {
       ventasTotales,
       // ventasPorProducto,
     };
-
+    console.log("ventas totales ", ventasTotales)
     res.status(200).json(inventarioInicialYFinal);
   } catch (error) {
     console.error(error);
