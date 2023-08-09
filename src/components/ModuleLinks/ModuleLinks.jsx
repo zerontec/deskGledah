@@ -60,6 +60,9 @@ const ModuleLinks = () => {
       <LinkBox style={{ backgroundColor: '#ff8c00' }} onClick={() => handleLinkClick('/dashboard/reportes')}>
         <LinkText>Reportes</LinkText>
       </LinkBox>
+      <LinkBox style={{ backgroundColor: '#3F51B5' }} onClick={() => handleLinkClick('/dashboard/cierre-inventarios')}>
+        <LinkText>Cierre Mes</LinkText>
+      </LinkBox>
     </LinkBoxContainer>
   );
 };
