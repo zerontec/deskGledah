@@ -23,6 +23,7 @@ import expenseReducer from './modules/expenses';
 import loanClientsReducer from './modules/loanClient';
 import paymentCustomerReducer from './modules/paymentCustomer';
 import expenseWeekReducer from './modules/ExpenseWeek';
+import cierresReducer from './modules/cierresMEnsuales';
 
 
 // Combinar los reducers de tus módulos
@@ -47,7 +48,8 @@ const rootReducer = combineReducers({
   report:reportReducer,
   payable:payablesReducer,
   expense:expenseReducer,
-  expenseWeek:expenseWeekReducer
+  expenseWeek:expenseWeekReducer,
+  cierre:cierresReducer
  
   // Otros módulos de Redux
 });
