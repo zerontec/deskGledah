@@ -406,15 +406,15 @@ return(	<>
           <strong>Producto:</strong> {product.name}<br />
           <strong>Descripción:</strong> {product.description}<br />
           <strong>Cantidad:</strong> {product.cantidad}<br />
-		  <strong>precio de Compra :</strong> {product.costo}<br />
-          <strong>Precio para venta:</strong> {product.price}<br />
+		  <strong>precio de Compra :</strong> {product.costo.toFixed(2)}<br />
+          <strong>Precio para venta:</strong> {product.price.toFixed(2)}<br />
          
         </li>
       ))}
     </ul>
 
 			<p>
-			  <strong>Total Compra:</strong> {selectedPurchase.totalAmount}
+			  <strong>Total Compra:</strong> {selectedPurchase.totalAmount.toFixed(2)}
 			</p>
 			<Button
 			  variant="contained"
@@ -587,7 +587,7 @@ return(	<>
         <TableRow key={items.id}>
           <TableCell align="left"> {items.purchaseNumber}</TableCell>
           <TableCell align="left"> {items.invoiceNumber}</TableCell>
-          <TableCell align="left"> {items.totalAmount}</TableCell>
+          <TableCell align="left"> {items.totalAmount.toFixed(2)}</TableCell>
           <TableCell align="left"> {capitalizeFirstLetter(items.supplierName)}</TableCell>
           <TableCell align="left"> {capitalizeFirstLetter(items.supplierRif)}</TableCell>
 				  
