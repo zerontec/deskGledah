@@ -2,6 +2,8 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable object-shorthand */
+
+import axios from 'axios'
 import React, { useState, useEffect, useRef } from 'react';
 import {
   TableHead,
@@ -517,7 +519,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
 
         setErrorMessage(error.message);
       });
@@ -665,6 +667,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
                 <TextField
                   fullWidth
                   type="number"
+                  inputMode="decimal"
                   label="Pago Movil"
                   // eslint-disable-next-line dot-notation
                   value={paymentAmounts['pagoMovil']}
@@ -710,6 +713,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
                   fullWidth
                   type="number"
                   label="Divisas"
+                  inputMode="decimal"
                   value={paymentAmounts.divisas}
                   onChange={(e) => handlePaymentAmountChange('divisas', e.target.value)}
                   disabled={isCredit || remainingAmounts < 0}
@@ -722,6 +726,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
                   fullWidth
                   type="number"
                   label="Zelle"
+                  inputMode="decimal"
                   value={paymentAmounts.zeller}
                   onChange={(e) => handlePaymentAmountChange('zeller', e.target.value)}
                   disabled={isCredit || remainingAmounts < 0}
@@ -734,6 +739,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
                   fullWidth
                   type="number"
                   label="Banesco Panama"
+                  inputMode="decimal"
                   value={paymentAmounts.panama}
                   onChange={(e) => handlePaymentAmountChange('panama', e.target.value)}
                   disabled={isCredit || remainingAmounts < 0}
