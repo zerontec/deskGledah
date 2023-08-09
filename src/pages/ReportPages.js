@@ -73,7 +73,7 @@ const ReportPages = () => (
         <Grid item xs={12} md={6}>
           {/* Otros botones para acceder a diferentes informes */}
      <Link to='/dashboard/cierres' >    <Button variant="contained">
-           Resumen de Cierres
+           Resumen de Cierres Caja Diarios
           </Button></Link>
       
         </Grid>
