@@ -41,6 +41,8 @@ import { TableClosure } from './components/TableClosure';
 import AccountPayablePages from './pages/AccountPayablePages';
 import ExpensesPages from './pages/ExpensesPage';
 import LoanClientPages from './pages/LoanClientPages';
+import CierresMensualPages from './pages/CierresMensualPages';
+import PagesCierreMensual from './pages/PagesCierreMensual';
 
 // ----------------------------------------------------------------------
 
@@ -99,6 +101,8 @@ export default function Router() {
         { path: 'cierres', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }>  <TableClosure/></ProtectedRoute> },
         { path: 'gastos', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }>  <ExpensesPages/></ProtectedRoute> },
         { path: 'prestamos-cliente', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <LoanClientPages/>  </ProtectedRoute> },
+        { path: 'cierre-inventarios', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <CierresMensualPages/>  </ProtectedRoute> },
+        { path: 'cierre-mensual', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <PagesCierreMensual/>  </ProtectedRoute> },
       ],
     },
 
