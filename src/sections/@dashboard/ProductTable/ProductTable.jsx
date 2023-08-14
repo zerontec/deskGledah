@@ -427,6 +427,7 @@ const ProductTable = () => {
       </Modal>
 
       <Box sx={{ m: 2 }}>
+        {/* <Subtitles>Prueba</Subtitles> */}
         <TextField label="Buscar Productos" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
         <Button variant="contained" onClick={handleSearch}>
           Buscar
