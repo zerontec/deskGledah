@@ -365,7 +365,7 @@ fetchData();
 			<TablePagination
 			  rowsPerPageOptions={[5, 10, 100]}
 			  component="div"
-			  count={pagables.payables.length}
+			  count={pagables?.payables?.accountsPayable?.length}
 			  rowsPerPage={rowsPerPage}
 			  page={page}
 			  onPageChange={handleChangePage}
