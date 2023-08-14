@@ -48,7 +48,7 @@ const sequelize =
     ? new Sequelize({
         database: 'gledah',
         dialect: "postgres",
-        host: 'localhost',
+        host: '192.168.1.2',
         port: 5432,
         username: 'postgres',
         password: '97124',
@@ -76,10 +76,9 @@ const sequelize =
         ssl: true,
       })
     : new Sequelize(
-        `postgres://postgres:97124@localhost/gledah`,
+        `postgres://postgres:97124@192.168.1.2/gledah`,
         { logging: false, native: false }
       );
-
 
 
 // let sequelize =
