@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
-const { app, BrowserWindow,dialog } = require('electron');
+const { app, BrowserWindow,dialog,ipcMain  } = require('electron');
+// const Store = require('electron-store');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const { spawn } = require('child_process');
@@ -8,10 +9,26 @@ const log = require('electron-log');
 const server = require('../backend/src/app.js');
 const { conn } = require('../backend/src/db.js');
 const { defaultAdminAndRoles } = require('../backend/src/dbLoad/loadUser.js');
+
 // const { runMigrations } = require('../backend/runMigration'); 
 
 const port = 5040;
 let backendProcess;
+// const store = new Store();
+
+// Cuando obtienes el valor del dólar, lo almacenas en el objeto store
+// ipcMain.on('setValoresDolar', (event, data) => {
+//   store.set('valoresDolar', data);
+// });
+
+// const store = new Store();
+// const getDollarValue = () => {
+//   return store.get('dollarValue', null);
+// };
+// const getDollarValueTimestamp = () => {
+//   return store.get('dollarValueTimestamp', null);
+// };
+
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -145,3 +162,5 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+// module.exports = { getDollarValue, getDollarValueTimestamp };
