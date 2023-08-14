@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
+
 import {
   
   TableCell,
@@ -13,6 +14,7 @@ import {
   Button,
   Grid,
   TextField,
+  TableBody,
  
   Modal,
 } from '@mui/material';
@@ -87,7 +89,7 @@ const SearchProduct = ({
   const resetFormP = () => {
     setProduct({});
     setProducts([]);
-    setProductsQuantity(0);
+    setProductsQuantity('');
     setSelectedProductPrice('');
   };
 
@@ -122,65 +124,84 @@ const SearchProduct = ({
     if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
+  const tableRef = useRef(null);
+  const firstRowRef = useRef(null);
+  const lastRowRef = useRef(null);
   
-
-
+  const handleKeyDown = (event) => {
+    if (event.key === 'Tab') {
+      if (event.shiftKey) {
+        if (document.activeElement === firstRowRef.current) {
+          lastRowRef.current.focus();
+          event.preventDefault();
+        }
+      } else if (document.activeElement === lastRowRef.current) {
+          firstRowRef.current.focus();
+          event.preventDefault();
+        }
+    }
+  };
+  
+  
   return (
     <>
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            maxHeight: '80vh',
-            overflowY: 'auto',
-            bgcolor: 'background.paper',
-            borderRadius: '8px',
-            boxShadow: 24,
-            p: 4,
-            backgroundColor: '#212B36',
-          }}
-        >
-          <StyledTextField
-            label="Buscar Productos"
-            style={{color:'white'}}
-            onChange={(e) => setQueryp(e.target.value.toLowerCase())}
-          />
-          {queryp.length > 0 && Array.isArray(availableProducts.products) && availableProducts.products.length > 0 && (
-      <Table>
-      {availableProducts.products.map((result, index) => (
-        <TableRow
-          key={result.id}
-          tabIndex={index + 1}
-          data-index={index}
-          onClick={() => handleProductSelect(result)}
-        >
-          <TableCell style={{ color: 'white' }}>{capitalizeFirstLetter(result.name)}</TableCell>
-          <TableCell style={{ color: 'white' }}>{capitalizeFirstLetter(result.description)}</TableCell>
-          <TableCell style={{ color: 'white' }}>$ {result.price}</TableCell>
-          <TableCell style={{ color: 'white' }}>Cant {result.quantity}</TableCell>
-        </TableRow>
-      ))}
-    </Table>
-      )}
-          <div style={{ color: 'white' }}>
-            <ErrorMessage message={availableProducts.products.message} show={searchError} />
-          </div>
-          <Button
-            style={{
-              marginTop: 10,
-              backgroundColor: 'transparent',
-            }}
-            variant="contained"
-            onClick={() => setModalOpen(false)}
-          >
-            x
-          </Button>
-        </Box>
-      </Modal>
+<Modal open={modalOpen} onClose={() => setModalOpen(false)} onKeyDown={handleKeyDown}>
+  <Box
+    sx={{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 800,
+      maxHeight: '80vh',
+      overflowY: 'auto',
+      bgcolor: 'background.paper',
+      borderRadius: '8px',
+      boxShadow: 24,
+      p: 4,
+      backgroundColor: '#212B36',
+    }}
+  >
+    <StyledTextField
+      label="Buscar Productos"
+      style={{ color: 'white' }}
+      onChange={(e) => setQueryp(e.target.value.toLowerCase())}
+    />
+    {queryp.length > 0 && Array.isArray(availableProducts.products) && availableProducts.products.length > 0 && (
+      <Table  onKeyDown={handleKeyDown}>
+        <TableBody>
+          {availableProducts.products.map((result, index) => (
+    <TableRow
+    key={result.id}
+    tabIndex={index === 0 ? 0 : -1}
+    ref={index === 0 ? firstRowRef : index === availableProducts.products.length - 1 ? lastRowRef : null}
+    onClick={() => handleProductSelect(result)}
+  >
+              <TableCell style={{ color: 'white' }}>{capitalizeFirstLetter(result.name)}</TableCell>
+              <TableCell style={{ color: 'white' }}>{capitalizeFirstLetter(result.description)}</TableCell>
+              <TableCell style={{ color: 'white' }}>$ {result.price}</TableCell>
+              <TableCell style={{ color: 'white' }}>Cant {result.quantity}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    )}
+    <div style={{ color: 'white' }}>
+      <ErrorMessage message={availableProducts.products.message} show={searchError} />
+    </div>
+    <Button
+      style={{
+        marginTop: 10,
+        backgroundColor: 'transparent',
+      }}
+      variant="contained"
+      onClick={() => setModalOpen(false)}
+    >
+      x
+    </Button>
+  </Box>
+</Modal>
+
 
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item xs={12} md={3}>
