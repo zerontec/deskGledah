@@ -41,7 +41,7 @@ import { FloatingButtonComponent } from '../../../components/FloatingButtonCompo
 
 import { PaymentTableCustomer } from '../../../components/PaymentTableCustomer';
 import { CreateLoanCustomer } from '../../../components/CreateLoanCustomer';
-import { CreateSeller } from '../../../components/CreateSeller';
+// import { CreateSeller } from '../../../components/CreateSeller';
 
 const columns = [
   {
@@ -252,7 +252,7 @@ const ClientLoanAdmin = () => {
       <hr/>
       <Box display="flex" justifyContent="space-between" marginLeft={10} marginRight={60} marginBottom={2}>
       <CreateLoanCustomer />
-      <CreateSeller/>
+      {/* <CreateSeller/> */}
     
     </Box>
  
