@@ -1,10 +1,15 @@
+/* eslint-disable no-else-return */
+/* eslint-disable no-unreachable */
+/* eslint-disable no-lonely-if */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable object-shorthand */
 
-import axios from 'axios'
+import axios from 'axios';
+
 import React, { useState, useEffect, useRef } from 'react';
+
 import {
   TableHead,
   TableCell,
@@ -22,6 +27,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+
 import Modal from '@mui/material/Modal';
 import Swal from 'sweetalert2';
 import { DayPicker } from 'react-day-picker';
@@ -40,6 +46,8 @@ import { CreateDevolucion } from '../../../components/CreateDevolucion';
 import { SearchProduct } from '../../../components/SearchProduct';
 import { SearchCustomer } from '../../../components/SearchCustomer';
 
+// import { getDollarValue, getDollarValueTimestamp } from '../../../../public/electron';
+
 // eslint-disable-next-line arrow-body-style
 const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [client, setClient] = useState({});
@@ -49,7 +57,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [currencys, setCurrencys] = useState('$');
   const [query, setQuery] = useState('');
   const [product, setProduct] = useState({});
-  const [productsQuantity, setProductsQuantity] = useState(0);
+  const [productsQuantity, setProductsQuantity] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [isCredit, setIsCredit] = useState(false);
   const [seller, setSeller] = useState({
@@ -61,11 +69,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [queryp, setQueryp] = useState('');
   const [searchError, setSearchError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [manualClientData, setManualClientData] = useState({
-    name: 'Leoberto Zeron',
-    identification: '13995284',
-    address: 'Bella vista san felix',
-  });
+  const [manualClientData, setManualClientData] = useState({});
   const dispatch = useDispatch();
   const [limpiar, setLimpiar] = useState('');
   const [selectedProductPrice, setSelectedProductPrice] = useState('');
@@ -75,11 +79,25 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedSeller, setSelectedSeller] = useState(null);
   const [valoresDolar, setValoresDolar] = useState({});
+  const [dollarValue, setDollarValue] = useState(null);
+  const [dollarValueTimestamp, setDollarValueTimestamp] = useState(null);
+  const [dolarManual, setDolarManual] = useState('');
+
+
+
   const [productName, setProductName] = useState('');
   const showAlert = () => {
     Swal.fire({
       title: '¡Alerta!',
       text: 'La cantidad de venta es mayor a la cantidad disponible del producto   !',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+    });
+  };
+  const showAlertClient = () => {
+    Swal.fire({
+      title: '¡Alerta!',
+      text: 'Ingrese Datos de EL cliente   !',
       icon: 'warning',
       confirmButtonText: 'Aceptar',
     });
@@ -98,8 +116,6 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
-
-
 
   const handleRemoveProduct = (index) => {
     const updatedProducts = [...products];
@@ -121,6 +137,18 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
       const enparalelovzla = data.enparalelovzla;
       // ...
 
+      // Almacenar los valores en la caché local
+      //  ipcRenderer.invoke('setValoresDolar', bcv);
+      //  ipcRenderer.invoke('setDollarValueTimestamp', Date.now());
+      localStorage.setItem(
+        'valoresDolar',
+        JSON.stringify({
+          bcv,
+          enparalelovzla,
+          // ...
+        })
+      );
+
       setValoresDolar({
         bcv,
         enparalelovzla,
@@ -135,17 +163,44 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [nformattedValue, setNformattedValue] = useState('');
 
   useEffect(() => {
-    if (valoresDolar && valoresDolar.bcv) {
+    // Obtener los valores del local storage
+    const storedValoresDolar = localStorage.getItem('valoresDolar');
+    if (storedValoresDolar) {
+      const valoresDolar = JSON.parse(storedValoresDolar);
+      if (valoresDolar && valoresDolar.bcv) {
+        const value = valoresDolar.bcv;
+        const numericValue = parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.'));
+        const formattedValue = numericValue.toLocaleString(undefined, { minimumFractionDigits: 3 });
+
+        setNumericValue(numericValue);
+        setNformattedValue(formattedValue);
+      } else {
+        console.log('El valor de bcv no está definido');
+      }
+    } else {
+      fetchDolarValue(); // Si no hay valores en el local storage, obtenerlos
+    }
+  }, [valoresDolar]);
+
+  useEffect(() => {
+    // Calcula el valor numérico y formateado basado en dolarManual o valoresDolar
+    if (dolarManual) {
+      const numericValue = parseFloat(dolarManual.replace(/[^\d,]/g, '').replace(',', '.'));
+      const formattedValue = numericValue.toLocaleString(undefined, { minimumFractionDigits: 3 });
+      setNumericValue(numericValue);
+      setNformattedValue(formattedValue);
+    } else if (valoresDolar && valoresDolar.bcv) {
       const value = valoresDolar.bcv;
       const numericValue = parseFloat(value.replace(/[^\d,]/g, '').replace(',', '.'));
       const formattedValue = numericValue.toLocaleString(undefined, { minimumFractionDigits: 3 });
-
       setNumericValue(numericValue);
       setNformattedValue(formattedValue);
-    } else {
-      console.log('El valor de bcv no está definido');
     }
-  }, [valoresDolar]);
+  }, [dolarManual, valoresDolar]);
+
+  const handleManualDolarChange = (event) => {
+    setDolarManual(event.target.value);
+  };
 
   console.log('numric value en postA', nformattedValue);
 
@@ -162,7 +217,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
         setQueryp('');
         setLimpiar('');
         setProduct({});
-        setProductsQuantity(0);
+        setProductsQuantity('');
 
         return;
       }
@@ -251,7 +306,6 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [cashrePM, setcashrePM] = useState(0);
   const [cashrePV, setcashrePV] = useState(0);
   const [changeAmount, setChangeAmount] = useState(0);
- 
 
   const handlePaymentAmountChange = (method, newAmount) => {
     setPaymentAmounts((prevAmounts) => {
@@ -441,6 +495,27 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
 
   const handleSubmitInvoice = (event) => {
     event.preventDefault();
+    
+      // Validación para cliente manual
+      if (!manualClientData?.identification || !manualClientData?.name || !manualClientData?.address) {
+        // Mostrar un mensaje de error o realizar alguna acción según tu necesidad
+        showAlertClient();
+        handleCloseModal();
+        return;
+       
+       
+      }
+     else {
+      // Validación para cliente seleccionado
+      if (!selectedCustomer?.identification || !selectedCustomer?.name || !selectedCustomer?.address) {
+        // Mostrar un mensaje de error o realizar alguna acción según tu necesidad
+        showAlertClient();
+        handleCloseModal();
+       
+       
+        return;
+      }
+    }
 
     let updatedPaymentMethodsArray = [];
     let totalChange = 0;
@@ -505,6 +580,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
         Swal.fire('¨Factura enviada  !', ' clicked el Botton!', 'success');
         setQuery('');
         setClient({});
+        setClient('');
         setProduct({});
         setProducts([]);
         setProductsQuantity('');
@@ -514,6 +590,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
         setSelectedSeller('');
         setSubtotal(0);
         handleCloseModal();
+
         if (response.error) {
           setErrorMessage(response.error);
         }
@@ -858,18 +935,39 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
           Facturación
         </Typography>
         <Typography variant="h5" sx={{ marginBottom: 2 }}>
-          Tasa de el día BCV {currencys} {valoresDolar.bcv}
-        </Typography>
-
+          Tasa de el día BCV {currencys} {valoresDolar.bcv || numericValue}
+        </Typography>{' '}
+        <TextField
+          style={{
+            marginLeft: 5,
+            marginTop: 1,
+            // width: 100, // Ancho personalizado
+            //  height:10,
+            backgroundColor: '#f5f5f5', // Color de fondo
+            borderRadius: 5, // Borde redondeado
+          }}
+          label="Valor del dólar manual"
+          value={dolarManual}
+          onChange={handleManualDolarChange}
+          InputProps={{
+            style: {
+              padding: '5px 5px', // Espaciado interno
+            },
+          }}
+          InputLabelProps={{
+            style: {
+              fontWeight: 'bold', // Estilo de la etiqueta
+            },
+          }}
+        />
+        {/* <p>Última actualización: {new Date(dollarValueTimestamp).toLocaleString()}</p> */}
         <CreateDevolucion />
-
         <hr
           style={{
             color: 'transparent',
             backgroundColor: 'transparent',
           }}
         />
-
         <SearchCustomer
           manualClientData={manualClientData}
           setManualClientData={setManualClientData}
@@ -886,7 +984,6 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
           handleManualSelect={handleManualSelect}
           nformattedValue={nformattedValue}
         />
-
         <SearchProduct
           queryp={queryp}
           setQueryp={setQueryp}
@@ -909,9 +1006,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
           productName={productName}
           setProductName={setProductName}
         />
-
         <ErrorMessage message={errorMessage} show={searchError} />
-
         <Grid container spacing={2} sx={{ marginBottom: 2 }}>
           <Grid item xs={12}>
             <Typography variant="h6">Productos Agregados: {products.length}</Typography>
