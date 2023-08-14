@@ -38,35 +38,6 @@ const FormContainer = styled(Grid)`
   margin-bottom: 16px;
 `;
 
-const FormTipo = styled.div`
-  display: flex;
-  gap: 3rem;
-  width: 100%;
-  max-width: 1000px;
-  margin-bottom: 2rem;
-  background-color: rgb(255, 107, 107);
-  border-radius: 30px;
-`;
-
-const SummaryContainerP = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  margin-top: 16px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  font-size: 15px;
-  color: white;
-  font-weight: 600;
-  background-color: #27ae60;
-  margin-bottom: 10px;
-  margin-top: 30px;
-  margin-right: 20px;
-
-  & > * {
-    margin-right: 10px;
-  }
-`;
 
 const SummaryContainer = styled(Box)`
   margin-top: 16px;
