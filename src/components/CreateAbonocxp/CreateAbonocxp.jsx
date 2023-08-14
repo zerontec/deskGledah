@@ -205,6 +205,7 @@ useEffect(()=>{
                   label="Cantidad "
                   name="montoPagado"
                   type="number"
+                  inputMode="decimal"
                   id="montoPagado"
                   value={formInfo.montoPagado}
                   onChange={handleChange}
