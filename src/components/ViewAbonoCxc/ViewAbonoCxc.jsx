@@ -80,7 +80,7 @@ const ViewAbonoCxc = ({ventaId}) => {
               <TableHead>
                 <TableRow>
                   <TableCell>ID</TableCell>
-                  <TableCell>Proveedor</TableCell>
+                  {/* <TableCell>Cliente</TableCell> */}
                   <TableCell>Monto Pagado</TableCell>
                   <TableCell>Fecha de Pago</TableCell>
                   {/* Agrega más columnas según la información que desees mostrar */}
@@ -90,7 +90,7 @@ const ViewAbonoCxc = ({ventaId}) => {
                 {selectedCuentaPagos.map((pago) => (
                   <TableRow key={pago.id}>
                     <TableCell>{pago.id}</TableCell>
-                    <TableCell>{pago.proveedor}</TableCell>
+                    {/* <TableCell>{pago.customer}</TableCell> */}
                     <TableCell>{formatAmountB(pago.montoPagado)}</TableCell>
                     <TableCell>{fDateTime(pago.createdAt)}</TableCell>
                     {/* Agrega más celdas según la información que desees mostrar */}
