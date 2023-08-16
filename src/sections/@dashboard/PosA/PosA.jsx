@@ -82,7 +82,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const [dollarValue, setDollarValue] = useState(null);
   const [dollarValueTimestamp, setDollarValueTimestamp] = useState(null);
   const [dolarManual, setDolarManual] = useState('');
-
+  const [invoiceSent, setInvoiceSent] = useState(false);
 
 
   const [productName, setProductName] = useState('');
@@ -247,9 +247,9 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     setSelectedProductPrice(0);
   };
 
-  console.log('aquieSelecte customer', selectedCustomer);
-  console.log('aquieSelecte seller', selectedSeller);
-  console.log('aqui Product', products);
+  // console.log('aquieSelecte customer', selectedCustomer);
+  // console.log('aquieSelecte seller', selectedSeller);
+  // console.log('aqui Product', products);
 
   // Crear Factura //
 
@@ -272,7 +272,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   const iva = subtotal - resultSubB;
   TotalF = resultSubB + iva;
 
-  console.log('el total de factura declarad', TotalF);
+  // console.log('el total de factura declarad', TotalF);
   // METODOS DE PAGO
 
   const [paymentAmounts, setPaymentAmounts] = useState({
@@ -286,7 +286,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   });
 
   const paymentAmountsSum = Object.values(paymentAmounts).reduce((total, amount) => total + parseFloat(amount || 0), 0);
-  console.log('paymenAmountSum', paymentAmountsSum);
+  // console.log('paymenAmountSum', paymentAmountsSum);
 
   // const [paymentAmountBs, setPaymentAmountBs] = useState(0);
 
@@ -347,7 +347,6 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
         // setRemainingAmounts(newRemainingAmounts);
         // setResultTotalBs(newResultTotalBs);
       }
-
       if (method === 'pagoMovil') {
         const newAmountBs = parseFloat(newAmount) || 0;
         const nformattedValueParsed = parseFloat(nformattedValue);
@@ -470,7 +469,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
 
   const formatAmountB = (amount) => numeral(amount).format('0,0.00');
 
-  console.log('paymetodo', paymentMethod);
+  // console.log('paymetodo', paymentMethod);
 
   const handleCloseModal = () => {
     // Restablece los estados a sus valores iniciales
@@ -493,29 +492,31 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     setcashresT('');
   };
 
+
+
+  useEffect(() => {
+    if (products.length === 0) {
+      setModalOpen(false);
+    }
+  }, [products]);
+
+
+  // ENVIAR FACTURA 
+
   const handleSubmitInvoice = (event) => {
     event.preventDefault();
-    
-      // Validación para cliente manual
-      if (!manualClientData?.identification || !manualClientData?.name || !manualClientData?.address) {
-        // Mostrar un mensaje de error o realizar alguna acción según tu necesidad
-        showAlertClient();
-        handleCloseModal();
-        return;
-       
-       
-      }
-     else {
-      // Validación para cliente seleccionado
-      if (!selectedCustomer?.identification || !selectedCustomer?.name || !selectedCustomer?.address) {
-        // Mostrar un mensaje de error o realizar alguna acción según tu necesidad
-        showAlertClient();
-        handleCloseModal();
-       
-       
-        return;
-      }
-    }
+   
+
+  if (
+    (!manualClientData?.identification || !manualClientData?.name || !manualClientData?.address) &&
+    (!selectedCustomer?.identification || !selectedCustomer?.name || !selectedCustomer?.address)
+  ) {
+
+    showAlertClient();
+    handleCloseModal();
+    return;
+  }
+
 
     let updatedPaymentMethodsArray = [];
     let totalChange = 0;
@@ -547,11 +548,11 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
 
     const productsData = products.map((product) => ({
       ...product,
-      price: parseFloat(product.price), // Convertir a número
-      quantity: parseInt(product.quantity, 10), // Convertir a número entero
+      price: parseFloat(product.price), 
+      quantity: parseInt(product.quantity, 10), 
     }));
 
-    // const paymentAmountsSum = Object.values(paymentAmounts).reduce((total, amount) => total + parseFloat(amount || 0), 0);
+    
 
     const invoiceData = {
       credit: isCredit,
@@ -578,16 +579,12 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     dispatch(createInvoices(invoiceData))
       .then((response) => {
         Swal.fire('¨Factura enviada  !', ' clicked el Botton!', 'success');
+        setInvoiceSent(true);
         setQuery('');
-        setClient({});
-        setClient('');
         setProduct({});
         setProducts([]);
         setProductsQuantity('');
         setIsModalOpen(null);
-        // setManualClientData('');
-        setSelectedCustomer('');
-        setSelectedSeller('');
         setSubtotal(0);
         handleCloseModal();
 
@@ -602,11 +599,10 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
       });
   };
 
-  useEffect(() => {
-    if (products.length === 0) {
-      setModalOpen(false);
-    }
-  }, [products]);
+
+
+
+
 
   //   const subtotal = 0;
   const handlePriceChange = (event) => {
@@ -653,13 +649,28 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     };
   }, []);
 
+
+
+
+  const resetFormD = () => {
+    
+    setClient('');
+    setManualClientData('');
+    setSelectedCustomer()
+   
+    setInvoiceSent(false);
+   
+  };
+
+
+
   return (
     <>
       <Modal
         open={isModalOpen}
         onClose={handleCloseModal}
-        remainingAmounts={remainingAmounts}
-        resultTotalBs={resultTotalBs}
+        // remainingAmounts={remainingAmounts}
+        // resultTotalBs={resultTotalBs}
       >
         <Box
           sx={{
@@ -968,6 +979,8 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
             backgroundColor: 'transparent',
           }}
         />
+
+
         <SearchCustomer
           manualClientData={manualClientData}
           setManualClientData={setManualClientData}
@@ -983,6 +996,8 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
           selectedCustomer={selectedCustomer}
           handleManualSelect={handleManualSelect}
           nformattedValue={nformattedValue}
+          resetFormD={resetFormD}
+          invoiceSent={invoiceSent}
         />
         <SearchProduct
           queryp={queryp}
@@ -1006,7 +1021,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
           productName={productName}
           setProductName={setProductName}
         />
-        <ErrorMessage message={errorMessage} show={searchError} />
+        {/* <ErrorMessage message={errorMessage} show={searchError} /> */}
         <Grid container spacing={2} sx={{ marginBottom: 2 }}>
           <Grid item xs={12}>
             <Typography variant="h6">Productos Agregados: {products.length}</Typography>

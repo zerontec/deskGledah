@@ -70,7 +70,7 @@ export const createInvoices = (invoiceData) => async (dispatch) => {
     });
     // Aquí podrías enviar una notificación de éxito al usuario
   } catch (error) {
-    if (error.response && error.response.status ) {
+    if (error.response && error.response.status === 500 ) {
       throw new Error("No se puedo crear la factura");
   
     }
