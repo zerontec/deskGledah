@@ -102,6 +102,7 @@ const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoCl
   const [messageError, setMessageError] = useState({});
   const { message } = useSelector((state) => state);
   const [selectedLoanClientEdit, setSelectedLoanClientEdit] = useState(null);
+  const [fetchError, setFetchError] = useState(null);
 
   fDateTime();
 
@@ -109,6 +110,7 @@ const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoCl
   console.log('pagos', pagos);
 
   useEffect(() => {
+    
     dispatch(getAllPaymentCustomer())
       .then((response) => {
         if (Array.isArray(response)) {
@@ -116,9 +118,14 @@ const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoCl
         } else {
           setPago([]);
         }
-      })
-      .catch((error) => console.log(error));
-  }, []);
+        setFetchError(null);
+      }
+      
+      )
+      
+      .catch((error) =>  setFetchError(error));
+      
+  }, [dispatch]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -205,7 +212,9 @@ const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoCl
         </Typography>
 
         <TextField label="Buscar Abonos" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-
+        {fetchError ? (
+          <p>Hubo un problema al cargar los datos de cuentas por pagar.</p>
+        ) : (
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
@@ -221,7 +230,7 @@ const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoCl
             </TableHead>
             <TableBody>
               {' '}
-              {Array.isArray(pagos?.paymentsCustomer) && pagos?.paymentsCustomer.length > 0 ? (
+              {Array.isArray(pagos?.paymentsCustomer) && pagos?.paymentsCustomer?.length > 0 ? (
                 pagos?.paymentsCustomer
                   //   .filter((item) =>
                   //     item.customer?.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -229,8 +238,8 @@ const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoCl
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item) => (
                     <TableRow key={item.loanId}>
-                      <TableCell align="left">{item.loanId}</TableCell>
-                      <TableCell align="left">{item.amount}</TableCell>
+                      <TableCell align="left">{item?.loanId}</TableCell>
+                      <TableCell align="left">{item?.amount}</TableCell>
                       <TableCell align="left">{fDateTime(item?.createdAt)}</TableCell>
                       {/* <TableCell align="left">{item.customer?.name}</TableCell>
 				<TableCell align="left">{item.customer?.identification}</TableCell> */}
@@ -265,6 +274,7 @@ const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoCl
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
+        )}
       </Box>
 
       <Modal open={openAbonoClientModal} onClose={handleCloseAbonoClientModal}>
