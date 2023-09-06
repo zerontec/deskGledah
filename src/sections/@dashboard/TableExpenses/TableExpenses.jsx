@@ -107,7 +107,7 @@ const TableExpenses = () => {
 	  console.log("gastos", gastos);
 	  
 	  const [page, setPage] = useState(0);
-	  const [rowsPerPage, setRowsPerPage] = useState(5);
+	  const [rowsPerPage, setRowsPerPage] = useState(100);
 	  const [searchTerm, setSearchTerm] = useState("");
 	 
 	  const handleSearch = () => {
