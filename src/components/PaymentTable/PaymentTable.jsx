@@ -96,6 +96,7 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
   const [selectButton, setSelectButton] = useState(null);
   const [messageError, setMessageError] = useState({});
   const { message } = useSelector((state) => state);
+  const [fetchError, setFetchError] = useState(null);
 
   fDateTime();
 
@@ -110,10 +111,12 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
         } else {
           setAbono([]);
         }
+        setFetchError(null);
       })
-      .catch((error) => console.log(error));
-  }, []);
-
+      .catch((error) => {
+        setFetchError(error);
+      });
+  }, [dispatch]);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -201,7 +204,9 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
         </Typography>
 
         <TextField label="Buscar Abonos" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-
+        {fetchError ? (
+          <p>Hubo un problema al cargar los datos de cuentas por pagar.</p>
+        ) : (
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
@@ -259,6 +264,7 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
+        )}
       </Box>
 
       <Modal open={openAbonoModal} onClose={handleCloseAbonoModal}>
