@@ -194,7 +194,7 @@ fDateTime()
           <TablePagination
             rowsPerPageOptions={[5,10, 100]}
             component="div"
-            count={compra.invoices.length}
+            count={compra?.invoices?.purchases?.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
