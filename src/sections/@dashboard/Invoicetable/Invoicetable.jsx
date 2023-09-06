@@ -61,7 +61,7 @@ const columns = [
   ];
 const InvoiceTable = () => {
 //   const [invoices, setInvoices] = useState([]);
-const [searchQuery, setSearchQuery] = useState('');
+
 const dispatch = useDispatch();
 const [selectedInvoices, setSelectedinvoices] = useState(null)
 
