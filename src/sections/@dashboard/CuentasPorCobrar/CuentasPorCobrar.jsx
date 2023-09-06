@@ -88,16 +88,33 @@ const CuentasPorCobrar = () => {
   
   const [selectedCuentaId, setSelectedCuentaId] = useState(null);
   const [open, setOpen] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     // Llamada a la API para obtener los datos de los pacientes y almacenarlos en el estado del componente.
-    dispatch(getAllCuentas());
+    
+    const fetchData = async () => {
+      try {
+        await dispatch(getAllCuentas());
+
+        setFetchError(null);
+      } catch (error) {
+        console.error('Error fetching account payable:', error);
+        // Asigna el error al estado fetchError
+        setFetchError(error);
+      }
+    };
+
+    fetchData();
   }, [dispatch]);
 
   const cuentasxcobrar = useSelector((state) => state.cuentasxc);
   console.log(cuentasxcobrar.cuentas);
+
+
+
 
   const handleEditClick = (product) => {
     setSelectedCuentaId(product.id);
@@ -424,6 +441,10 @@ const CuentasPorCobrar = () => {
         <Button variant="contained" onClick={handleSearch}>
           Buscar
         </Button>
+
+        {fetchError ? (
+          <p>Hubo un problema al cargar los datos de cuentas por pagar.</p>
+        ) : (
         <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }}>
   <TableHead>
@@ -507,7 +528,7 @@ const CuentasPorCobrar = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
-      
+        )}
         <hr/>
       </Box>
 
