@@ -81,10 +81,7 @@ const columns = [
   },
 ];
 
-const StyledContainer = styled(Container)`
-  padding-top: 24px;
-  padding-bottom: 24px;
-`;
+
 const ActionsContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -113,7 +110,7 @@ const ClientLoanAdmin = () => {
   // const { id } = useParams();
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(100);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [selectedLoanClientId, setSelectedLoanClientId] = useState(null);
@@ -129,6 +126,7 @@ const ClientLoanAdmin = () => {
   const [openEditClientModal, setOpenEditClientModal] = useState(false);
 
   const [openAbonoClientModal, setOpenAbonoClientModal] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -149,7 +147,6 @@ const ClientLoanAdmin = () => {
     });
     setOpenEditClientModal(true);
   };
-
 
   const handleCloseEditModal = () => {
     setOpenEditModal(false);
@@ -176,9 +173,16 @@ const ClientLoanAdmin = () => {
     // Llamada a la API para obtener los datos del cliente
 
     dispatch(getAllLoansClient())
-      .then((response) => setDeudasC(response))
-      .catch((error) => console.log(error));
+      .then((response) => {
+      setDeudasC(response);
+
+      setFetchError(null)
+    })
+      
+      .catch((error) => {setFetchError(error)});
   }, [dispatch]);
+
+
 
   function deleteHandler(item) {
     Swal.fire({
@@ -200,8 +204,6 @@ const ClientLoanAdmin = () => {
     });
   }
 
-
-
   const handleSubmitEdit = (e) => {
     if (selectedLoanClientEdit.amount && selectedLoanClientEdit.notes) {
       e.preventDefault();
@@ -212,7 +214,7 @@ const ClientLoanAdmin = () => {
       };
       dispatch(updateLoandClient(selectedLoanClientId, data));
       Swal.fire('¨Prestamo Editado con Exito  !', 'You clicked the button!', 'success');
-     
+
       dispatch(getAllLoansClient());
 
       handleCloseEditClientModal();
@@ -234,13 +236,10 @@ const ClientLoanAdmin = () => {
       amount: '',
       notes: '',
       status: '',
-      phoneNumber:'',
+      phoneNumber: '',
     });
     setOpen(false);
   };
-
-
-
 
   fDateTime();
 
@@ -249,88 +248,95 @@ const ClientLoanAdmin = () => {
       <Typography variant="h4" component="h1">
         Prestamos y Abonos Clientes
       </Typography>
-      <hr/>
+      <hr />
       <Box display="flex" justifyContent="space-between" marginLeft={10} marginRight={60} marginBottom={2}>
-      <CreateLoanCustomer />
-      {/* <CreateSeller/> */}
-    
-    </Box>
- 
+        <CreateLoanCustomer />
+        {/* <CreateSeller/> */}
+      </Box>
 
       <hr />
       <Typography variant="h5" component="h3">
         Deudas Clientes
       </Typography>
-
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell key={column.id} align="left" minWidth={column.minWidth}>
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Array.isArray(deudaC.loansClients) && deudaC.loansClients.length > 0 ? (
-              deudaC.loansClients
-                .filter((item) => item.amount.toLowerCase().includes(searchTerm.toLowerCase()))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell align="left">{item.id}</TableCell>
-                    <TableCell align="left">{item.customer?.identification}</TableCell>
-                    <TableCell align="left">{item.customer?.name}</TableCell>
-                    <TableCell align="left">{item.amount}</TableCell>
-                    <TableCell align="left">{item.status}</TableCell>
-                    <TableCell align="left">{fDateTime(item.createdAt)}</TableCell>
-                    <TableCell align="left">{item.notes}</TableCell>
-                    {/* Agrega más columnas según las propiedades de la deuda */}
-                    <TableCell className="tableCell">
-                      <Button variant="contained" onClick={() => handleOpenEditClientModal(item)}>
-                        Editar
-                      </Button>
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      <Button variant='contained' onClick={() => handleOpenAbonoClientModal(item.id)}>Abonar</Button>
-                    </TableCell>
-                    <TableCell className="tableCell">
-                      
-                        <Button variant="contained" style={{backgroundColor:"red", color:"white"}} id={item.id} onClick={() => deleteHandler(item)} >Borrar</Button>
-  
-                    </TableCell>
-                    <Link to={`/dashboard/perfil-cliente/${item.customer?.id}`} style={{ textDecoration: 'none' }}>
-                      <button>Ver perfil</button>
-                    </Link>
-                  </TableRow>
-                ))
-            ) : (
+      {fetchError ? (
+        <p>Hubo un problema al cargar los datos de cuentas por pagar.</p>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={columns.length}>No hay datos disponibles</TableCell>
+                {columns.map((column) => (
+                  <TableCell key={column.id} align="left" minWidth={column.minWidth}>
+                    {column.label}
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 100]}
-          component="div"
-          count={deudaC.loansClients.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
-
+            </TableHead>
+            <TableBody>
+              {Array.isArray(deudaC.loansClients) && deudaC.loansClients.length > 0 ? (
+                deudaC.loansClients
+                  .filter((item) => item.amount.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell align="left">{item.id}</TableCell>
+                      <TableCell align="left">{item.customer?.identification}</TableCell>
+                      <TableCell align="left">{item.customer?.name}</TableCell>
+                      <TableCell align="left">{item.amount}</TableCell>
+                      <TableCell align="left">{item.status}</TableCell>
+                      <TableCell align="left">{fDateTime(item.createdAt)}</TableCell>
+                      <TableCell align="left">{item.notes}</TableCell>
+                      {/* Agrega más columnas según las propiedades de la deuda */}
+                      <TableCell className="tableCell">
+                        <Button variant="contained" onClick={() => handleOpenEditClientModal(item)}>
+                          Editar
+                        </Button>
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        <Button variant="contained" onClick={() => handleOpenAbonoClientModal(item.id)}>
+                          Abonar
+                        </Button>
+                      </TableCell>
+                      <TableCell className="tableCell">
+                        <Button
+                          variant="contained"
+                          style={{ backgroundColor: 'red', color: 'white' }}
+                          id={item.id}
+                          onClick={() => deleteHandler(item)}
+                        >
+                          Borrar
+                        </Button>
+                      </TableCell>
+                      <Link to={`/dashboard/perfil-cliente/${item.customer?.id}`} style={{ textDecoration: 'none' }}>
+                        <button>Ver perfil</button>
+                      </Link>
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length}>No hay datos disponibles</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 100]}
+            component="div"
+            count={deudaC.loansClients.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </TableContainer>
+      )}
       <PaymentTableCustomer
         loanId={selectedLoanClientId}
         openAbonoClientModal={openAbonoClientModal}
         handleCloseAbonoClientModal={() => setOpenAbonoClientModal(false)}
       />
 
-<Modal open={openEditClientModal} onClose={handleCloseEditClientModal}>
+      <Modal open={openEditClientModal} onClose={handleCloseEditClientModal}>
         <Box
           sx={{
             position: 'absolute',
@@ -416,9 +422,6 @@ const ClientLoanAdmin = () => {
           </Button>
         </Box>
       </Modal>
-
-
-
 
       <FloatingButtonComponent />
     </>
