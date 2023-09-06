@@ -122,7 +122,7 @@ const columns = [
 const TablePurchases = () => {	
 	
 	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(5);
+	const [rowsPerPage, setRowsPerPage] = useState(100);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedPurchase, setSelectedPurchase] = useState(null);
 	const [errors, setErrors] = useState({});
@@ -547,13 +547,13 @@ return(	<>
 
 	<Box sx={{ m: 2 }}>
 	  <TextField
-		label="Buscar Productos"
+		label="Buscar Compras"
 		value={searchTerm}
 		onChange={(e) => setSearchTerm(e.target.value)}
 	  />
-	  <Button variant="contained" onClick={handleSearch}>
+	  {/* <Button variant="contained" onClick={handleSearch}>
 		Buscar
-	  </Button>
+	  </Button> */}
 	  <TableContainer component={Paper}>
 		<Table sx={{ minWidth: 650 }}>
 		  <TableHead>
@@ -577,8 +577,8 @@ return(	<>
 		  
 		  <TableBody>
 
-		  {Array.isArray(compras.purchases) &&
-    compras.purchases
+		  {Array.isArray(compras?.purchases) &&
+    compras?.purchases
       .filter((items) =>
         items.supplierName.toLowerCase().includes(searchTerm.toLowerCase())
       )
