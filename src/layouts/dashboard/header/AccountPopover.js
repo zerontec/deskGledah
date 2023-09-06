@@ -116,6 +116,18 @@ export default function AccountPopover() {
             </MenuItem>
           </Link>
         </Stack>
+        <Stack sx={{ p: 1 }}>
+          {/* {MENU_OPTIONS.map((option) => (
+            <MenuItem key={option.label} onClick={handleClose}>
+              {option.label}
+            </MenuItem>
+          ))} */}
+          <Link to={'/dashboard/configuracion'} style={{ textDecoration: 'none' }}>
+          <MenuItem sx={{ m: 1 }} onClick={handleMenuItemClick}>
+             Configuración
+            </MenuItem>
+          </Link>
+        </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
