@@ -1,3 +1,5 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable react/jsx-no-comment-textnodes */
 import React, { useState, useEffect, useRef } from 'react';
 
 import {
@@ -33,6 +35,31 @@ const StyledTextField = styled(TextField)`
       color: #919eab;
     }
   }
+`;
+const FormContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+`;
+
+const FieldContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 16px;
+
+  & > * {
+    margin-bottom: 8px;
+  }
+`;
+
+const ActionsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
 `;
 
 const UploadProductMasi = () => {
@@ -89,15 +116,47 @@ const UploadProductMasi = () => {
     setManualProductData({});
   };
 
-  // const handleInputChange = (event) => {
-  //   const { name, value } = event.target;
-  //   const parsedValue = name === 'costo' || name === 'quantity' || name === 'price' ? parseFloat(value) : value;
+ 
 
-  //   setNewProduct((prevState) => ({
-  //     ...prevState,
-  //     [name]: parsedValue,
-  //   }));
-  // };
+
+  const [editProduct, setEditProduct] = useState(null); // Producto seleccionado para edición
+
+ 
+
+  const handleEditProduct = (product) => {
+    setEditProduct(product);
+  };
+  
+
+
+  const handleUpdateProduct = () => {
+    // Encuentra el índice del producto editado en la lista de productos
+    const editedProductIndex = products.findIndex((p) => p.barcode === editProduct.barcode);
+  
+    // Actualiza el producto en la lista con los nuevos valores
+    const updatedProduct = {
+      ...editProduct,
+      quantity: parseInt(editProduct.quantity, 10), // Convierte a número entero
+      costo: parseFloat(editProduct.costo), // Convierte a número de punto flotante
+      price: parseFloat(editProduct.price), // Convierte a número de punto flotante
+    };
+    // Actualiza la lista de productos
+
+    const updatedProducts = [...products];
+    updatedProducts[editedProductIndex] = updatedProduct;
+  
+
+
+    setProducts(updatedProducts);
+  
+    // Limpia el estado de editProduct
+    setEditProduct(null);
+  };
+  const handleCancelEdit = () => {
+  // Limpia el estado de editProduct
+  setEditProduct(null);
+};
+
 
   const availableProducts = useSelector((state) => state.product);
 
@@ -198,6 +257,9 @@ const UploadProductMasi = () => {
     // calculatePrice();
   };
 
+
+  
+
   const handleUploadProducts = (event) => {
     // Aquí puedes enviar los productos al servidor para su carga masiva
     event.preventDefault();
@@ -226,7 +288,9 @@ const UploadProductMasi = () => {
 
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center' }}>
         <TableContainer>
           <Button
             label="Buscar Producto"
@@ -238,38 +302,148 @@ const UploadProductMasi = () => {
             // onChange={(event) => setQueryp(event.target.value)}
             // onBlur={handleSearchProduct}
           >
-            Agregar Productos{' '}
+            Buscar Productos{' '}
           </Button>
+          <hr/>
           <ErrorMessage message={availableProducts.products.message} show={searchError} />
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Codigo</TableCell>
-                <TableCell align="center">Producto</TableCell>
-                <TableCell align="center">Descripcion</TableCell>
-                <TableCell align="center">Cantidad</TableCell>
-                <TableCell align="center">Costo</TableCell>
-                <TableCell align="center">PrecioVEnta</TableCell>
-                {/* <TableCell align="center"></TableCell> */}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {products.map((product, index) => (
-                <TableRow key={index}>
-                  <TableCell>{product.barcode || manualProductData.barcode}</TableCell>
-                  <TableCell align="center">{product.name || manualProductData.name}</TableCell>
-                  <TableCell align="center">{product.description || manualProductData.description}</TableCell>
-                  <TableCell align="center">{product.quantity}</TableCell>
-                  <TableCell align="center">{product.costo}</TableCell>
-                  <TableCell align="center">{product.price}</TableCell>
+         
+          {editProduct ? (
+  // Renderizar el formulario de edición aquí, utilizando los valores de editProduct
+  <div>
+  <input style={{ padding:'10px', marginBottom:'10px', border:'1px solid #ccc',
+  boxSizing:'border-box', borderRadius:'4px', fontSize:'16px', marginLeft:'5px'}}
+  type="text"
+  value={editProduct.barcode}
+  onChange={(e) => {
+    // Actualiza el nombre del producto en modo de edición
+    const updatedCodigo= e.target.value;
+    setEditProduct((prevProduct) => ({
+      ...prevProduct,
+      barcode: updatedCodigo,
+    }));
+  }}
+  />
 
-                  <TableCell align="center">
-                    <DeleteIcon onClick={() => handleRemoveProduct(index)} />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+
+<input
+style={{ padding:'10px', marginBottom:'10px', border:'1px solid #ccc',
+boxSizing:'border-box', borderRadius:'4px', fontSize:'16px'}}
+  type="text"
+  value={editProduct.name}
+  onChange={(e) => {
+    // Actualiza el nombre del producto en modo de edición
+    const updatedName = e.target.value;
+    setEditProduct((prevProduct) => ({
+      ...prevProduct,
+      name: updatedName,
+    }));
+  }}
+  />
+  <input style={{ padding:'10px', marginBottom:'10px', border:'1px solid #ccc',
+  boxSizing:'border-box', borderRadius:'4px', fontSize:'16px', marginLeft:'5px'}}
+  type="text"
+  value={editProduct.description}
+  onChange={(e) => {
+    // Actualiza el nombre del producto en modo de edición
+    const updatedDescription = e.target.value;
+    setEditProduct((prevProduct) => ({
+      ...prevProduct,
+      description: updatedDescription ,
+    }));
+  }}
+  />
+
+<input style={{ padding:'10px', marginBottom:'10px', border:'1px solid #ccc',
+  boxSizing:'border-box', borderRadius:'4px', fontSize:'16px', marginLeft:'5px'}}
+ 
+  type='number'
+  inputMode='numeric'
+  value={editProduct.quantity}
+  onChange={(e) => {
+    // Actualiza el nombre del producto en modo de edición
+    const updatedQuantity = e.target.value;
+    setEditProduct((prevProduct) => ({
+      ...prevProduct,
+      quantity: updatedQuantity ,
+    }));
+  }}
+  />
+  <input style={{ padding:'10px', marginBottom:'10px', border:'1px solid #ccc',
+  boxSizing:'border-box', borderRadius:'4px', fontSize:'16px', marginLeft:'5px'}}
+  inputMode="decimal"
+  type='number'
+  value={editProduct.costo}
+  onChange={(e) => {
+    // Actualiza el nombre del producto en modo de edición
+    const updatedCosto = e.target.value;
+    setEditProduct((prevProduct) => ({
+      ...prevProduct,
+      costo: updatedCosto ,
+    }));
+  }}
+  />
+<input style={{ padding:'10px', marginBottom:'10px', border:'1px solid #ccc',
+  boxSizing:'border-box', borderRadius:'4px', fontSize:'16px', marginLeft:'5px'}}
+   inputMode="decimal"
+   type='number'
+  value={editProduct.price}
+ 
+  onChange={(e) => {
+    // Actualiza el nombre del producto en modo de edición
+    const updatedPrice = e.target.value;
+    setEditProduct((prevProduct) => ({
+      ...prevProduct,
+      price: updatedPrice ,
+    }));
+  }}
+  />
+    <Button   style={{backgroundColor:'#4caf50', color:"#fff", marginLeft:'10px', marginRight:'10px'}}
+  color="secondary" onClick={handleUpdateProduct}>Guardar cambios</Button>
+    {/* Botón para cancelar la edición */}
+    <Button   variant="contained"
+  color="secondary" onClick={handleCancelEdit}>Cancelar</Button>
+  </div>
+) : (
+
+          <Table>
+
+        
+            <TableHead>
+                    <TableRow>
+                      <TableCell>Codigo</TableCell>
+                      <TableCell align="center">Producto</TableCell>
+                      <TableCell align="center">Descripcion</TableCell>
+                      <TableCell align="center">Cantidad</TableCell>
+                      <TableCell align="center">Costo</TableCell>
+                      <TableCell align="center">PrecioVenta</TableCell>
+                      {/* <TableCell align="center"></TableCell> */}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                      {products.map((product, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{product.barcode || manualProductData.barcode}</TableCell>
+                          <TableCell align="center">{product.name || manualProductData.name}</TableCell>
+                          <TableCell align="center">{product.description || manualProductData.description}</TableCell>
+                          <TableCell align="center">{product.quantity}</TableCell>
+                          <TableCell align="center">{product.costo}</TableCell>
+                          <TableCell align="center">{product.price}</TableCell>
+
+                          <TableCell align="center">
+                            <DeleteIcon onClick={() => handleRemoveProduct(index)} />
+                          </TableCell>
+                          <TableCell>
+                            
+                            <button onClick={() => handleEditProduct(product)}>Editar</button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                   
+                               
+  </Table>
+
+  )}
         </TableContainer>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
@@ -413,6 +587,11 @@ const UploadProductMasi = () => {
           </Button>
         </Box>
       </Modal>
+
+
+
+
+      
     </>
   );
 };
