@@ -41,14 +41,14 @@ const path = require("path");
 //   done();
 // });
 
-const IP_ADDRESS = '192.168.1.2'; 
+const HOST = '192.168.1.2' || 'gledah'; 
 
 const sequelize =
   process.env.NODE_ENV === "development"
     ? new Sequelize({
         database: 'gledah',
         dialect: "postgres",
-        host: '192.168.1.2',
+        host: 'gledah',
         port: 5432,
         username: 'postgres',
         password: '97124',
@@ -76,7 +76,7 @@ const sequelize =
         ssl: true,
       })
     : new Sequelize(
-        `postgres://postgres:97124@192.168.1.2/gledah`,
+        `postgres://postgres:97124@gledah/gledah`,
         { logging: false, native: false }
       );
 
