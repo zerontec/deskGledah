@@ -1,6 +1,6 @@
 {
     "name": "gledah",
-    "version": "1.1.5",
+    "version": "1.1.7",
     "description": "Sistema Facturacion y Administracion ",
     "main": "public/electron.js",
     "homepage": "./",
@@ -20,21 +20,18 @@
         "re-start": "rm -rf build node_modules && yarn install && yarn start",
         "re-build": "rm -rf build node_modules && yarn install && yarn build",
         "preelectron-pack": "yarn build",
-        "wdio": "wdio run wdio.conf.js"
+        "wdio": "wdio run wdio.conf.js",
+        "rebuild": "electron-rebuild -f -w serialport"
     },
     "build": {
         "appId": "com.gledah",
         "directories": {
             "buildResources": "assets"
         },
-
-      
-
         "win": {
             "target": "NSIS",
             "icon": "imageInst/logoints.png"
         },
-        
         "publish": [
             {
                 "provider": "github",
@@ -105,6 +102,7 @@
         "dotenv": "^16.3.1",
         "electron-is-dev": "^2.0.0",
         "electron-log": "^4.4.8",
+        "electron-printer": "^0.0.5",
         "electron-store": "^8.1.0",
         "electron-updater": "^6.1.1",
         "express": "^4.16.4",
@@ -138,11 +136,13 @@
         "redux-thunk": "^2.4.2",
         "request-promise": "^4.2.0",
         "sequelize": "^6.21.3",
+        "serialport": "^10.3.0",
         "simplebar-react": "^3.2.1",
         "socket.io": "^4.6.1",
         "socket.io-client": "^4.7.1",
         "styled-components": "^5.3.11",
         "sweetalert2": "^11.7.10",
+        "util": "^0.12.5",
         "validator": "^13.9.0",
         "web-vitals": "^3.1.1",
         "winston": "^3.2.1",
@@ -160,6 +160,7 @@
         "electron": "^25.5.0",
         "electron-builder": "^23.6.0",
         "electron-is-dev": "^2.0.0",
+        "electron-rebuild": "^3.2.9",
         "eslint": "^8.34.0",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-config-prettier": "^8.6.0",
