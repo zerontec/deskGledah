@@ -43,6 +43,10 @@ import ExpensesPages from './pages/ExpensesPage';
 import LoanClientPages from './pages/LoanClientPages';
 import CierresMensualPages from './pages/CierresMensualPages';
 import PagesCierreMensual from './pages/PagesCierreMensual';
+import SettingPages from './pages/SettingPages';
+import ConfigurationPrinterPage from './pages/ConfigurationPrinterPage';
+import LoanPages from './pages/LoanPages';
+import LoanEmployePages from './pages/LoanEmployePages';
 
 // ----------------------------------------------------------------------
 
@@ -101,8 +105,14 @@ export default function Router() {
         { path: 'cierres', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }>  <TableClosure/></ProtectedRoute> },
         { path: 'gastos', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }>  <ExpensesPages/></ProtectedRoute> },
         { path: 'prestamos-cliente', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <LoanClientPages/>  </ProtectedRoute> },
+        { path: 'prestamos-empleados', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <LoanEmployePages/>  </ProtectedRoute> },
         { path: 'cierre-inventarios', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <CierresMensualPages/>  </ProtectedRoute> },
         { path: 'cierre-mensual', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <PagesCierreMensual/>  </ProtectedRoute> },
+        { path: 'prestamos', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <LoanPages/>  </ProtectedRoute> },
+        { path: 'configuracion', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <SettingPages/>  </ProtectedRoute> },
+        // { path: 'configuracion-impresora', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <ConfigurationPrinterPage/>  </ProtectedRoute> },
+        { path: 'configuracion-impresora', element: <ProtectedRoute isAllowed={!!user && user.roles.includes('ROLE_ADMIN') }> <ConfigurationPrinterPage/>  </ProtectedRoute> },
+        
       ],
     },
 
