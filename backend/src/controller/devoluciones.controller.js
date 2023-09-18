@@ -130,7 +130,7 @@ const crearDevolucion = async (req, res, next) => {
       const productoItem = await Product.findByPk(id);
       const nombreProducto = productoItem ? productoItem.name : null;
 
-      console.log("nombreProduc", nombreProducto)
+      console.log("nombreProducto", nombreProducto)
       // Guardar los cambios en el producto devuelto
       await ProductoDevuelto.create({
         name: nombreProducto || "",
@@ -158,23 +158,23 @@ const crearDevolucion = async (req, res, next) => {
       }
     }
 
-    // Sumar las cantidades devueltas al inventario de Product
-    // for (const producto of productos) {
-    //   const { barcode,id, quantity} = producto;
+    // resto las cantidades devueltas al inventario de Product
+    for (const producto of productos) {
+      const { barcode,id, quantity} = producto;
 
-    //   const inventory = await Product.findOne({
-    //     where:{
-    //       // eslint-disable-next-line object-shorthand
-    //       barcode:barcode
-    //     }
+      const inventory = await Product.findOne({
+        where:{
+          // eslint-disable-next-line object-shorthand
+          barcode:barcode
+        }
       
-    //   });
+      });
 
-    //   if (inventory) {
-    //     inventory.quantity += quantity;
-    //     await inventory.save();
-    //   }
-    // }
+      if (inventory) {
+        inventory.quantity -= quantity;
+        await inventory.save();
+      }
+    }
 
     // Crear la devolución
     const numeroDevolucion = await generarDevolucionNumber();
@@ -195,6 +195,7 @@ const crearDevolucion = async (req, res, next) => {
     await factura.save();
 
     const numeroNota = await generarNumeroNota();
+    
     // Crear la nota de crédito
     const notaCredito = await NotaCredito.create({
       numeroNota,
@@ -210,6 +211,8 @@ const crearDevolucion = async (req, res, next) => {
     // Actualizar el estado de la devolución
     devolucion.estado = "Completa";
     await devolucion.save();
+
+
 
     res.status(201).json({ message: "Devolución creada exitosamente" });
   } catch (error) {

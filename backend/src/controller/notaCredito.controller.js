@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-const { NotaCredito } = require("../db.js");
+const { NotaCredito } = require("../db");
 
 // const { PDFDocument, StandardFonts } = require('pdf-lib');
 // const fs = require('fs');
