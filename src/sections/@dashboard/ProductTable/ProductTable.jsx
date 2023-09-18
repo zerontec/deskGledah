@@ -449,9 +449,9 @@ const ProductTable = () => {
             <TableBody>
               {' '}
   
-              {Array.isArray(productos.products) && productos.products.length > 0 ?(
-                productos.products
-                  .filter((items) => items.name.toLowerCase().includes(searchTerm.toLowerCase()))
+              {Array.isArray(productos?.products) && productos?.products.length > 0 ?(
+                productos?.products
+                  .filter((items) => items.barcode.toLowerCase().includes(searchTerm.toLowerCase()))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((items) => (
 

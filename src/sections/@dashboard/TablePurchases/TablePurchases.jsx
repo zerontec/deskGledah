@@ -23,6 +23,7 @@ import styled from "styled-components";
 import { deletePurchase, getAllPurchases, updatePurchase } from '../../../redux/modules/purchase';
 import { fDateTime } from '../../../utils/formatTime';
 import { FloatingButtonComponent } from '../../../components/FloatingButtonComponent';
+import { CreateDvolutionC } from '../../../components/CreateDvolutionC';
 
 
 
@@ -544,6 +545,9 @@ return(	<>
 		</Button>
 	  </Box>
 	</Modal>
+
+
+<CreateDvolutionC/>
 
 	<Box sx={{ m: 2 }}>
 	  <TextField

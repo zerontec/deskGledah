@@ -85,8 +85,7 @@ const Purchases = () => {
     productsPrices: '',
     costo:''
   });
-  const [currency, setCurrency] = useState('Bs');
-  const [currencys, setCurrencys] = useState('$');
+  
   const [isPopupOpen, setIsPopupOpen] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState('');
   const [limpiarForm, setLimpiarForm] = useState('');
@@ -182,26 +181,26 @@ const Purchases = () => {
   console.log('compras', compras);
 
   const handleSearchProvider = () => {
-    // Agregar lógica para buscar al proveedor
-    const exactMatch = proveedor.suppliers.find((supplier) => supplier.rif === query);
+   
+    const exactMatch = proveedor?.suppliers.find((supplier) => supplier?.rif === query);
     if (exactMatch) {
       setSupplier(exactMatch);
     } else {
-      const partialMatch = proveedor.suppliers.find((supplier) => supplier.rif.includes(query));
+      const partialMatch = proveedor?.suppliers.find((supplier) => supplier.rif.includes(query));
       setSupplier(partialMatch || {});
     }
     setSearchError(true);
   };
 
   const handleSearchProduct = () => {
-    const exactMatch = availableProducts.products.find(
-      (product) => product.barcode === queryp || product.name === queryp
+    const exactMatch = availableProducts?.products.find(
+      (product) => product?.barcode === queryp || product.name === queryp
     );
 
     if (exactMatch) {
       setProduct(exactMatch);
     } else {
-      const partialMatch = availableProducts.products.find((product) => product.barcode.includes(queryp));
+      const partialMatch = availableProducts?.products.find((product) => product.barcode.includes(queryp));
       setProduct(partialMatch || {});
     }
   };
