@@ -90,7 +90,7 @@ const columns = [
 
 const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoClientModal }) => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(100);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
