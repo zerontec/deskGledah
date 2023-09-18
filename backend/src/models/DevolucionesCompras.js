@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
         
           invoiceNumber: {
             type: DataTypes.STRING,
-            allowNull: false,
+            
           },
       productoD: {
             type: DataTypes.ARRAY(DataTypes.JSONB),
@@ -35,6 +35,13 @@ module.exports = (sequelize) => {
           total: {
             type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
+          },
+
+
+          supplierData:{
+
+
+            type:DataTypes.JSONB
           },
 
   

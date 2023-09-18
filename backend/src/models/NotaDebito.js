@@ -4,7 +4,7 @@ module.exports = (sequelize) => {
   sequelize.define('notaDebito', {
     numeroNota: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+       
         unique: true,
       },
       fechaEmision: {

@@ -52,7 +52,7 @@ const updateProductDefectuoso = async(req, res, next)=> {
       const product = await ProductosDefectuosos.findByPk(id);
       if(!product){
   
-        return res.status(404),json({message:"No se encontro producto"})
+        return res.status(404).json({message:"No se encontro producto"})
       }
   
       product.update(req.body);

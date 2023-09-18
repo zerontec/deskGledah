@@ -1,5 +1,5 @@
 const {Router} = require('express');
-const { crearDevolucionCompra } = require('../controller/devolucionCompra.controller');
+const { crearDevolucionCompra, obtenerDevolucionCompra, obtenerDevolucionesCompras, editDevolucionCompra } = require('../controller/devolucionCompra.controller');
 
 const router = Router();
 
@@ -8,9 +8,9 @@ const router = Router();
 
 
 router.post('/devolution', crearDevolucionCompra);
-// router.get('/all-devolucion', obtenerDevolucionesVentas);
-// router.get('/one/:id', obtenerDevolucionVenta)
-// router.put('/update/:id', editDevolucion )
+router.get('/all-devolucion', obtenerDevolucionCompra);
+router.get('/one/:id', obtenerDevolucionesCompras)
+router.put('/update/:id', editDevolucionCompra)
 
 
 
