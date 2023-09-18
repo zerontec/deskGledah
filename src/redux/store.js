@@ -24,6 +24,8 @@ import loanClientsReducer from './modules/loanClient';
 import paymentCustomerReducer from './modules/paymentCustomer';
 import expenseWeekReducer from './modules/ExpenseWeek';
 import cierresReducer from './modules/cierresMEnsuales';
+import devolutionCReducer from './modules/devolutionC';
+import notaDReducer from './modules/notaD';
 
 
 // Combinar los reducers de tus módulos
@@ -41,6 +43,7 @@ const rootReducer = combineReducers({
   devolution:devolutionReducer,
   productd:productdReducer,
   notasc:notaReducer,
+  notad:notaDReducer,
   loan:loanReducer,
   loanClient:loanClientsReducer,
   payment:paymentReducer,
@@ -49,7 +52,8 @@ const rootReducer = combineReducers({
   payable:payablesReducer,
   expense:expenseReducer,
   expenseWeek:expenseWeekReducer,
-  cierre:cierresReducer
+  cierre:cierresReducer,
+  devolutionc:devolutionCReducer
  
   // Otros módulos de Redux
 });
