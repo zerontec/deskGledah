@@ -93,7 +93,7 @@ const columns = [
 
 const ProductD = () => {
 	const [page, setPage] = useState(0);
-	const [rowsPerPage, setRowsPerPage] = useState(5);
+	const [rowsPerPage, setRowsPerPage] = useState(100);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [selectedProduct, setSelectedProduct] = useState(null);
 	const [errors, setErrors] = useState({});
@@ -148,10 +148,7 @@ const ProductD = () => {
 		dispatch(deleteMultiplyProductsD(seleccion));
 		setSelectedProducts([]);
 		Swal.fire("Los productos han sido borrado!");
-		
-		setTimeout(() => {
-		  window.location.reload();
-		}, 500);
+		dispatch(getAllProductD())
 		} else {
 		Swal.fire("Los productos  Estan Seguro !");
 		}
@@ -460,12 +457,12 @@ const ProductD = () => {
 							  </Button>
 							</TableCell>
 	
-							<TableCell className="tableCell">
+							{/* <TableCell className="tableCell">
 							  
-							  <div className="deleteButton" id={items.id} onClick={() => deleteHandler(items)}>
+							  <div className="deleteButton" id={items.id} onClick={() => deleteHandler(items.id)}>
 								<Button>Borrar</Button>
 							  </div>
-							</TableCell>
+							</TableCell> */}
 						  </>
 	
 				
