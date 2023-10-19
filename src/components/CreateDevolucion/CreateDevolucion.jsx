@@ -163,7 +163,7 @@ const CreateDevolucion = () => {
 
   return (
     <>
-      <hr />
+    
       <Button variant="contained" onClick={() => setSelectButton()}>
           Crear Devolucion
         </Button>
