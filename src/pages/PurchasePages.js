@@ -90,6 +90,9 @@ return(
 	<LinkText>Compras por Pagar </LinkText>
   </LinkBox>
 
+  <LinkBox style={{ backgroundColor: '#FF5722' }} onClick={() => handleLinkClick('/dashboard/notas-debito')}>
+	<LinkText>Notas de Debito </LinkText>
+  </LinkBox>
 
  
 </LinkBoxContainer>
