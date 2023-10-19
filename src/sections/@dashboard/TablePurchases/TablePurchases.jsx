@@ -356,7 +356,7 @@ return(	<>
 		</FormTipo>
 		
        
-	<hr />
+	
 	{/* Modal Ver Compra */}
 	<Modal
 	  open={selectedPurchase !== null}
@@ -547,7 +547,7 @@ return(	<>
 	</Modal>
 
 
-<CreateDvolutionC/>
+<CreateDvolutionC/>   
 
 	<Box sx={{ m: 2 }}>
 	  <TextField

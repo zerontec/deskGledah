@@ -183,43 +183,36 @@ const UserSystem = () => {
       
 
 
-      const handleSubmitEdit = (e) => {
-        if (
-          selectedUserEdit.name &&
-          selectedUserEdit.username &&
-          selectedUserEdit.email &&
-          selectedUserEdit.password &&
-           selectedUserEdit.role
-        
-        ) {
+        const handleSubmitEdit = (e) => {
           e.preventDefault();
-          const data = {
-            ...selectedUserEdit,
-            id: selectedUserId,
-            roles: [selectedUserEdit.role], // Pasar el rol seleccionado como un array
-          };
-          dispatch(updateUser(selectedUserId, data));
-          Swal.fire(
-          "¨Usuaro Editado con Exito  !",
-          "You clicked the button!",
-          "success"
-          );
-          dispatch(getAllUsers());
-          
-          handleCloseModal();
-      
-          
-        } else {
-          Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Debe completar toda la informacion !",
-          });
-      
-          handleCloseModal();
-        }
-        };
 
+          const data = {
+            id: selectedUserId,
+            name: selectedUserEdit.name,
+            username: selectedUserEdit.username,
+            email: selectedUserEdit.email,
+            role: selectedUserEdit.role,
+          };
+        
+          if (selectedUserEdit.password !== "") {
+            data.password = selectedUserEdit.password;
+          }
+        
+        
+          console.log("data", data);
+        
+          dispatch(updateUser(selectedUserId, data));
+        
+          Swal.fire(
+            "Usuario Editado con Exito !",
+            "You clicked the button!",
+            "success"
+          );
+        
+          dispatch(getAllUsers());
+          handleCloseModal();
+        };
+        
 
       const handleSubmit = (event) => {
         event.preventDefault();
@@ -303,7 +296,7 @@ const UserSystem = () => {
 		  username: user.username,
 		  email: user.email,
       roles:user.roles,
-       password:user.password
+      password:user.password
 		 
 		});
 		setOpen(true);
@@ -457,7 +450,7 @@ const UserSystem = () => {
     <>
 
 
-{/* Modal para editar el análisis */}
+{/* Modal para editar usuario */}
 <Modal open={open} onClose={handleCloseModal}>
 		  <Box
 			sx={{
@@ -537,7 +530,7 @@ const UserSystem = () => {
 				   label= "Password"
 				   name="password"
            type="password"
-					  value={selectedUserEdit.password}
+					  // value={selectedUserEdit.password}
 					  onChange={(e) =>
 						setSelectedUserEdit({
 						  ...selectedUserEdit,
@@ -680,7 +673,7 @@ const UserSystem = () => {
         </Card>
       )}
 
-      <Popover
+      {/* <Popover
         open={editMode}
         onClose={handleEditCancel}
         anchorEl={anchorRef.current}
@@ -718,7 +711,7 @@ const UserSystem = () => {
               >
                 <MenuItem value="admin">Admin</MenuItem>
                 {/* <MenuItem value="vendedor">vendedor</MenuItem> */}
-                <MenuItem value="facturacion">Facturacion</MenuItem>
+                {/* <MenuItem value="facturacion">Facturacion</MenuItem>
               </Select>
             </FormControl>
           </Stack>
@@ -732,8 +725,8 @@ const UserSystem = () => {
             </Button>
           </Box>
         </Card>
-      </Popover>
-
+      </Popover> */}
+ 
 
     <Modal open={selectButton !== null} onClose={() => setSelectButton(null)}>
 		  <Box

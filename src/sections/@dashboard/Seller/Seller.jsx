@@ -508,6 +508,20 @@ dispatch(getAllSeller())
                     }
                   />
 
+                     {/* <TextField
+                    label="password"
+                    name="password"
+                    type="password"
+                    value={selectedUserEdit.password}
+                    onChange={(e) =>
+                      setSelectedUserEdit({
+                        ...selectedUserEdit,
+                        password: e.target.value,
+                      })
+                    }
+                  /> */}
+
+
                   <br />
                 </FieldContainer>
                 <ActionsContainer>
@@ -569,6 +583,7 @@ dispatch(getAllSeller())
                 <TableCell>{user.identification}</TableCell>
                 <TableCell>{sentenceCase(user.address)}</TableCell>
                 <TableCell>{user.telf}</TableCell>
+                
                 <TableCell>
                   <Stack direction="row" spacing={1}>
                     <IconButton size="small" onClick={() => handleEditClick(user)}>
