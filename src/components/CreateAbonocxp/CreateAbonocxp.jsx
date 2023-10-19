@@ -113,9 +113,9 @@ useEffect(()=>{
       proveedor: formInfo.proveedor,
       montoPagado: montoPagadoNumber,
       fechaPago: formInfo.fechaPago,
-      compraId,
+      purchaseId:compraId,
     };
-
+console.log("data",data)
     setLoading(true);
     dispatch(createAbonocxp(data))
       .then((response) => {
