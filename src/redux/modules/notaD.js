@@ -63,9 +63,9 @@ export const createNota = (formInfo) => async (dispatch) => {
   }
 };
 
-export const getAllNotas = () => async (dispatch) => {
+export const getAllNotasd = () => async (dispatch) => {
   try {
-    const resp = await axios.get(`${API_URL_D}api/creditnotes/all-notes `);
+    const resp = await axios.get(`${API_URL_D}api/debitnotes/all-notes `);
 
     dispatch({
       type: GET_ALL_NOTASD,
@@ -79,7 +79,7 @@ export const getAllNotas = () => async (dispatch) => {
 
 export const updateNota = (id, data) => async (dispatch) => {
   try {
-    const resp = await axios.put(`${API_URL_D}api/api/creditnotes/update/${id}`, data);
+    const resp = await axios.put(`${API_URL_D}api/debitnotes/update/${id}`, data);
 
     dispatch({
       type: UPDATE_NOTAD,
@@ -94,7 +94,7 @@ export const updateNota = (id, data) => async (dispatch) => {
 
 export const deleteNota = (id) => async (dispatch) => {
   try {
-    await axios.delete(`${API_URL_D}api/api/creditnotes/delete/${id}`);
+    await axios.delete(`${API_URL_D}api/debitnotes/delete/${id}`);
 
     dispatch({
       type: DELETE_NOTAD,
