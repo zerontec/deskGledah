@@ -46,7 +46,7 @@ const crearNotaDebito = async (numeroNota, fecha, monto, clienteData) => {
   }
 };
 
-const findAllNota = async (req, res, next) => {
+const findAllNotaD = async (req, res, next) => {
   try {
     const notas = await NotaDebito.findAll();
     if (notas.length === 0) {
@@ -125,7 +125,7 @@ const deleteNota = async (req, res, next) => {
 
 module.exports = {
   crearNotaDebito,
-  findAllNota,
+  findAllNotaD,
   editNota,
   obtenerUnaNota,
   deleteNota

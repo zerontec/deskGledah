@@ -192,8 +192,19 @@ const putUser = async (req, res, next) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (user) {
-      // Actualizar los datos del usuario
-      await user.update(req.body);
+
+
+     
+   
+      const updatedUserData = { ...req.body };
+
+      // Si se proporciona una nueva contraseña, hashearla antes de guardarla
+      if (req.body.password) {
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(req.body.password, salt);
+        
+        updatedUserData.password = hash;
+      }
 
       if (req.body.roles) {
         // Si se proporciona el campo "roles" en req.body, actualizar también los roles del usuario
@@ -206,6 +217,9 @@ const putUser = async (req, res, next) => {
         });
         await user.setRoles(roles);
       }
+
+       // Actualizar los datos del usuario
+       await user.update(updatedUserData);
 
       res.status(201).send({ user, message: "Usuario actualizado exitosamente" });
     } else {

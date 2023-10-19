@@ -16,8 +16,6 @@ const {
  
 } = require("../db");
 
-const { crearNotaCredito } = require("./notaCredito.controller");
-
 // Agregar el método getProductos al modelo InvoiceFactura
 InvoiceFactura.prototype.getProductos = async function () {
   const products = await this.getProducts();
