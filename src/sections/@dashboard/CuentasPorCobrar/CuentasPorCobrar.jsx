@@ -58,7 +58,7 @@ const columns = [
   },
   {
     id: 'name',
-    label: 'Monto a Cobrar',
+    label: 'Monto Factura',
     minWidth: 100,
   },
   {
@@ -68,7 +68,7 @@ const columns = [
   },
   {
     id: 'gender',
-    label: 'Saldo Pendiente',
+    label: 'Saldo Por Cobrar',
     minWidth: 50,
   },
  

@@ -539,12 +539,12 @@ const Devolutions = () => {
 								Ver
 							  </Button>
 							</TableCell>
-							<TableCell className="tableCell">
+							{/* <TableCell className="tableCell">
 							  
 							  <Button variant="contained" onClick={() => handleEditClick(items)}>
 								Editar
 							  </Button>
-							</TableCell>
+							</TableCell> */}
 	
 							<TableCell className="tableCell">
 							  
