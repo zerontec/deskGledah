@@ -772,8 +772,8 @@ const Purchases = () => {
           <Grid item xs={12} md={2}>
             <TextField
               label="Costo"
-              type="number"
-              inputMode="decimal"
+              // type="number"
+              // inputMode="decimal"
               variant="outlined"
               value={formValuesP.costo}
               onChange={handleProductCostoChange}
@@ -794,8 +794,8 @@ const Purchases = () => {
             <TextField
               label="Precio de Venta"
               variant="outlined"
-              type="number"
-              inputMode="decimal"
+              // type="number"
+              // inputMode="decimal"
               value={formValuesP.precioVenta}
               onChange={handlePrecioVenta}
               fullWidth

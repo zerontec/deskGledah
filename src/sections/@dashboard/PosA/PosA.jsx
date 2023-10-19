@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-else-return */
 /* eslint-disable no-unreachable */
 /* eslint-disable no-lonely-if */
@@ -185,7 +186,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
   useEffect(() => {
     // Calcula el valor numérico y formateado basado en dolarManual o valoresDolar
     if (dolarManual) {
-      const numericValue = parseFloat(dolarManual.replace(/[^\d,]/g, '').replace(',', '.'));
+      const numericValue = parseFloat(dolarManual);
       const formattedValue = numericValue.toLocaleString(undefined, { minimumFractionDigits: 3 });
       setNumericValue(numericValue);
       setNformattedValue(formattedValue);
@@ -202,7 +203,8 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     setDolarManual(event.target.value);
   };
 
-  console.log('numric value en postA', nformattedValue);
+  console.log('nFormated value en postA', nformattedValue);
+  console.log('numeric value en postA', numericValue);
 
   // Agregar Productos a la lista
 
@@ -231,8 +233,8 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
         price: selectedPrice,
         quantity: productsQuantity,
         subtotal: selectedPrice * productsQuantity,
-        subtotalBs: selectedPrice * productsQuantity * parseFloat(nformattedValue),
-        subtotalBsu: selectedPrice * parseFloat(nformattedValue),
+        subtotalBs: selectedPrice * productsQuantity * numericValue,
+        subtotalBsu: selectedPrice * numericValue,
       };
       setProducts([...products, productToAdd]);
 
@@ -297,9 +299,9 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
     const newRemainingAmounts = TotalF - paymentAmountsSum;
 
     setRemainingAmounts(newRemainingAmounts);
-    const remainBs = newRemainingAmounts * parseFloat(nformattedValue);
+    const remainBs = newRemainingAmounts * parseFloat(numericValue);
     setResultTotalBs(remainBs);
-  }, [TotalF, paymentAmountsSum, nformattedValue]);
+  }, [TotalF, paymentAmountsSum, nformattedValue, numericValue]);
 
   const [cashresEfe, setcashresEfe] = useState(0);
   const [cashresT, setcashresT] = useState(0);
@@ -314,10 +316,13 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
         [method]: newAmount || 0,
       };
 
+      
+
       if (method === 'efectivoBs') {
         const newAmountBs = parseFloat(newAmount) || 0;
         console.log('newAmountBs', newAmountBs);
-        const nformattedValueParsed = parseFloat(nformattedValue);
+       
+        const nformattedValueParsed = parseFloat(numericValue);
 
         const retsDola = newAmountBs / nformattedValueParsed;
         console.log('resDola', retsDola);
@@ -335,7 +340,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
       }
       if (method === 'transfer') {
         const newAmountBs = parseFloat(newAmount) || 0;
-        const nformattedValueParsed = parseFloat(nformattedValue);
+        const nformattedValueParsed = parseFloat(numericValue);
         const retsDola = newAmountBs / nformattedValueParsed;
         const casRespT = newAmountBs * nformattedValueParsed;
 
@@ -349,7 +354,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
       }
       if (method === 'pagoMovil') {
         const newAmountBs = parseFloat(newAmount) || 0;
-        const nformattedValueParsed = parseFloat(nformattedValue);
+        const nformattedValueParsed = parseFloat(numericValue);
 
         const casResPM = newAmountBs * nformattedValueParsed;
         setcashrePM(casResPM);
@@ -362,7 +367,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
       }
       if (method === 'puntoVenta') {
         const newAmountBs = parseFloat(newAmount) || 0;
-        const nformattedValueParsed = parseFloat(nformattedValue);
+        const nformattedValueParsed = parseFloat(numericValue);
 
         const casResPV = newAmountBs * nformattedValueParsed;
         setcashrePV(casResPV);
@@ -740,7 +745,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  type="number"
+                 
                   label="Efectivo Bs"
                   // eslint-disable-next-line dot-notation
                   value={paymentAmounts['efectivoBs']}
@@ -754,8 +759,8 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  type="number"
-                  inputMode="decimal"
+                  // type="number"
+                  // inputMode="decimal"
                   label="Pago Movil"
                   // eslint-disable-next-line dot-notation
                   value={paymentAmounts['pagoMovil']}
@@ -769,8 +774,8 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  type="number"
-                  inputMode="decimal"
+                  // type="number"
+                  // inputMode="decimal"
                   label="Transferencia"
                   // eslint-disable-next-line dot-notation
                   value={paymentAmounts['transfer']}
@@ -784,8 +789,8 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  type="number"
-                  inputMode="decimal"
+                  // type="number"
+                  // inputMode="decimal"
                   label="Punto de Venta"
                   // eslint-disable-next-line dot-notation
                   value={paymentAmounts['puntoVenta']}
@@ -799,8 +804,8 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  type="number"
-                  label="Divisas"
+                  // type="number"
+                  // label="Divisas"
                   inputMode="decimal"
                   value={paymentAmounts.divisas}
                   onChange={(e) => handlePaymentAmountChange('divisas', e.target.value)}
@@ -812,9 +817,9 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  type="number"
+                  // type="number"
                   label="Zelle"
-                  inputMode="decimal"
+                  // inputMode="decimal"
                   value={paymentAmounts.zeller}
                   onChange={(e) => handlePaymentAmountChange('zeller', e.target.value)}
                   disabled={isCredit || remainingAmounts < 0}
@@ -825,9 +830,9 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
               <Grid item xs={12}>
                 <TextField
                   fullWidth
-                  type="number"
+                  // type="number"
                   label="Banesco Panama"
-                  inputMode="decimal"
+                  // inputMode="decimal"
                   value={paymentAmounts.panama}
                   onChange={(e) => handlePaymentAmountChange('panama', e.target.value)}
                   disabled={isCredit || remainingAmounts < 0}
@@ -946,7 +951,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
           Facturación
         </Typography>
         <Typography variant="h5" sx={{ marginBottom: 2 }}>
-          Tasa de el día BCV {currencys} {valoresDolar.bcv || numericValue}
+          Tasa de el día BCV {currencys} {valoresDolar.bcv || dolarManual}
         </Typography>{' '}
         <TextField
           style={{
@@ -959,6 +964,10 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
           }}
           label="Valor del dólar manual"
           value={dolarManual}
+         
+        
+         
+           
           onChange={handleManualDolarChange}
           InputProps={{
             style: {
@@ -995,7 +1004,7 @@ const PosA = ({ handleCustomerSelect, handleSellerSelect }) => {
           setSelectedCustomer={setSelectedCustomer}
           selectedCustomer={selectedCustomer}
           handleManualSelect={handleManualSelect}
-          nformattedValue={nformattedValue}
+          nformattedValue={numericValue}
           resetFormD={resetFormD}
           invoiceSent={invoiceSent}
         />
