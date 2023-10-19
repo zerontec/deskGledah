@@ -140,7 +140,7 @@ app.whenReady().then(() => {
     try {
       await defaultAdminAndRoles();
     } catch (err) {
-      console.error('Error al crear roles y usuarios por defecto:', err);
+      console.error('ya existen  roles y usuarios por defecto:', err);
     }
     
     createWindow();
