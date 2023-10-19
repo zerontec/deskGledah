@@ -129,10 +129,10 @@ const getAllAccountsPayable = async (req, res, next) => {
 // Controlador para crear un nuevo pago de cuenta por pagar
 const createPayment = async (req, res, next) => {
   try {
-    const { proveedor, montoPagado, fechaPago, compraId } = req.body;
+    const { proveedor, montoPagado, fechaPago, purchaseId } = req.body;
 
     // Obtener la cuenta por pagar correspondiente a la compra
-    const accountPayable = await AccountPayable.findByPk(compraId);
+    const accountPayable = await AccountPayable.findByPk(purchaseId);
 
     // Verificar si la cuenta por pagar existe y no ha sido pagada anteriormente
     if (!accountPayable || accountPayable.status === "pagada") {
@@ -186,7 +186,7 @@ const createPayment = async (req, res, next) => {
       proveedor,
       montoPagado,
       fechaPago,
-      compraId, // Asignar el ID de la compra al campo de clave externa
+      compraId:purchaseId, // Asignar el ID de la compra al campo de clave externa
     });
 
     // Respuesta exitosa

@@ -174,8 +174,8 @@ const crearDevolucionCompra = async (req, res, next) => {
       invoiceNumber,
       
       total: montoDev,
-       productoD: productos,
-       purchaseNumber
+      productoD: productos,
+      purchaseNumber:purchaseNumber
 
 
     });
@@ -183,7 +183,14 @@ const crearDevolucionCompra = async (req, res, next) => {
     // tengo que sacar el o los  productos de defectuoso y agregar a porductos 
     // Actualizar la cantidad de productos devueltos en la tabla Product
    
+    const supplierData = {
+        supplierName:compra.supplierName,
+        supplierAddress:compra.supplierAddress,
+        supplierRif:compra.supplierRif,
+        supplierPhone:compra.supplierPhone
 
+    }
+  
     // Crear la nota de débito
     const numeroNota = await generarNumeroNota();
    
@@ -194,9 +201,11 @@ const crearDevolucionCompra = async (req, res, next) => {
       montoDev: montoDev || 0,
       // numeroDevolucion,
       productosDevueltos: JSON.stringify(productos),
-      facturaAfectada: purchaseNumber,
+      numeroCompra:purchaseNumber,
+      numerofacturaCompra:invoiceNumber,
+      
       monto: totalDevolucion,
-      // supplierData:compra.
+      clienteData:supplierData
     });
 
 

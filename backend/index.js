@@ -41,7 +41,7 @@ const port =  5040;
 
 
   // Syncing all the models at once.
-  conn.sync({ force: false }).then(async() => {
+  conn.sync({ force: false}).then(async() => {
     try {
       await defaultAdminAndRoles();
     } catch (err) {
