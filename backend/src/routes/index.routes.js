@@ -14,6 +14,7 @@ const storeRoutes = require('./store.routes');
 const reportRoutes = require('./reports.routes');
 const devolutionsRoutes = require('./devolucion.routes')
 const notaRoutes = require('./notaCredito.routes');
+const debitDRoutes = require ('./notaDebito.routes')
 const pdfRoutes = require('./pdf.routes');
 const accountpayableRoutes = require('./accountP.routes');
 const accountreceivableRoutes = require('./accountR.routes');
@@ -40,6 +41,7 @@ router.use(`${URL}store`, storeRoutes);
 router.use(`${URL}report`, reportRoutes);
 router.use(`${URL}devolucion`, devolutionsRoutes);
 router.use(`${URL}creditnotes`, notaRoutes);
+router.use(`${URL}debitnotes`, debitDRoutes);
 router.use(`${URL}pdf`, pdfRoutes);
 router.use(`${URL}account-payable`, accountpayableRoutes);
 router.use(`${URL}account-receivable`, accountreceivableRoutes);
