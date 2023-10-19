@@ -19,6 +19,18 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      numeroCompra:{
+        type:DataTypes.STRING,
+       
+
+      },
+      numerofacturaCompra:{
+
+          type:DataTypes.STRING,
+          
+
+      },
+
       clienteData: {
         type: DataTypes.JSONB,
         allowNull: true,
