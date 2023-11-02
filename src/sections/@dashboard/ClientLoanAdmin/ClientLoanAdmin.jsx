@@ -41,6 +41,7 @@ import { FloatingButtonComponent } from '../../../components/FloatingButtonCompo
 
 import { PaymentTableCustomer } from '../../../components/PaymentTableCustomer';
 import { CreateLoanCustomer } from '../../../components/CreateLoanCustomer';
+import { ViewAbonoCustomer } from '../../../components/ViewAbonoCustomer';
 // import { CreateSeller } from '../../../components/CreateSeller';
 
 const columns = [
@@ -127,6 +128,9 @@ const ClientLoanAdmin = () => {
 
   const [openAbonoClientModal, setOpenAbonoClientModal] = useState(false);
   const [fetchError, setFetchError] = useState(null);
+
+
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -258,6 +262,12 @@ const ClientLoanAdmin = () => {
       <Typography variant="h5" component="h3">
         Deudas Clientes
       </Typography>
+      <TextField
+          label="Buscar Cliente Numero Identificacion"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
       {fetchError ? (
         <p>Hubo un problema al cargar los datos de cuentas por pagar.</p>
       ) : (
@@ -275,7 +285,7 @@ const ClientLoanAdmin = () => {
             <TableBody>
               {Array.isArray(deudaC.loansClients) && deudaC.loansClients.length > 0 ? (
                 deudaC.loansClients
-                  .filter((item) => item.amount.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .filter((item) => item.customer?.identification.toLowerCase().includes(searchTerm.toLowerCase()))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item) => (
                     <TableRow key={item.id}>
@@ -298,18 +308,13 @@ const ClientLoanAdmin = () => {
                         </Button>
                       </TableCell>
                       <TableCell className="tableCell">
-                        <Button
-                          variant="contained"
-                          style={{ backgroundColor: 'red', color: 'white' }}
-                          id={item.id}
-                          onClick={() => deleteHandler(item)}
-                        >
-                          Borrar
-                        </Button>
+                        <ViewAbonoCustomer loanId={item.id}/>
                       </TableCell>
+                      <TableCell className="tableCell">
                       <Link to={`/dashboard/perfil-cliente/${item.customer?.id}`} style={{ textDecoration: 'none' }}>
-                        <button>Ver perfil</button>
+                        <Button variant="contained" > perfil</Button>
                       </Link>
+                      </TableCell>
                     </TableRow>
                   ))
               ) : (
@@ -335,6 +340,11 @@ const ClientLoanAdmin = () => {
         openAbonoClientModal={openAbonoClientModal}
         handleCloseAbonoClientModal={() => setOpenAbonoClientModal(false)}
       />
+
+
+
+
+
 
       <Modal open={openEditClientModal} onClose={handleCloseEditClientModal}>
         <Box
