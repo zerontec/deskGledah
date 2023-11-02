@@ -160,7 +160,7 @@ const createAccountsReceivable = async (req, res, next) => {
   
       // Verificar si la cuenta por pagar ha sido totalmente pagada
       if (nuevoSaldoPendiente === 0) {
-        accountReceivable.status = "pagada";
+        accountReceivable.status = "Cobrada";
         await accountReceivable.save();
       }
   
@@ -186,7 +186,7 @@ const createAccountsReceivable = async (req, res, next) => {
   const getAllPagoVentasID = async(req, res, next)=> {
 
     try{
-      const ventaId = req.body
+      const ventaId = req.body;
     
       const pago = await PaymentCuenta.findAll({
         
