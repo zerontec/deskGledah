@@ -26,7 +26,7 @@ import { fDateTime } from '../../utils/formatTime';
 
 const ViewAbonoCxc = ({ventaId}) => {
 	const API_URL_D = 'http://localhost:5040/';
-  	const API_URL = 'https://expressjs-postgres-production-bd69.up.railway.app/';
+  const API_URL = 'https://expressjs-postgres-production-bd69.up.railway.app/';
 
   const [selectedCuenta, setSelectedCuenta] = useState(null);
 

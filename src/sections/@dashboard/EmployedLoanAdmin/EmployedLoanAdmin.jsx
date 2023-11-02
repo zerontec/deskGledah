@@ -33,6 +33,9 @@ import { FloatingButtonComponent } from '../../../components/FloatingButtonCompo
 import { CreateLoan } from '../../../components/CreateLoan';
 import { CreateSeller } from '../../../components/CreateSeller';
 import { PaymentTable } from '../../../components/PaymentTable';
+import { ViewAbonoEmployed } from '../../../components/ViewAbonoEmployed';
+
+
 
 const columns = [
   {
@@ -379,6 +382,13 @@ const EmployedLoanAdmin = () => {
 <Typography variant="h5" component="h3">
             Deudas Empleados
           </Typography>
+
+          <TextField
+          label="Buscar Empleado por codigo"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
           {fetchError ? (
           <p>Hubo un problema al cargar los datos de cuentas por pagar.</p>
         ) : (
@@ -396,7 +406,7 @@ const EmployedLoanAdmin = () => {
               <TableBody>
                 {Array.isArray(deuda.loans) && deuda.loans.length > 0 ? (
                   deuda.loans
-                    .filter((item) => item.amount.toLowerCase().includes(searchTerm.toLowerCase()))
+                    .filter((item) => item.seller?.codigo.toLowerCase().includes(searchTerm.toLowerCase()))
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((item) => (
                       <TableRow key={item.id}>
@@ -417,13 +427,15 @@ const EmployedLoanAdmin = () => {
                           <Button variant="contained"  onClick={() => handleOpenAbonoModal(item.id)}>Abonar</Button>
                         </TableCell>
                         <TableCell className="tableCell">
-                         
-                            <Button variant='contained'  style={{ backgroundColor: "red", color: '#fff' }}  id={item.id} onClick={() => deleteHandler(item)}>Borrar</Button>
+                         <ViewAbonoEmployed loanId={item.id}/>
+                           
                           
                         </TableCell>
+                        <TableCell className="tableCell">
                         <Link to={`/dashboard/perfil-empleados/${item.seller?.id}`} style={{ textDecoration: 'none' }}>
-                          <button>Ver perfil</button>
+                          <Button  variant= "contained" > perfil</Button>
                         </Link>
+                        </TableCell>
                       </TableRow>
                     ))
                 ) : (
