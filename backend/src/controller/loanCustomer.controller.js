@@ -21,8 +21,11 @@ const createLoan = async (req, res, next) => {
         amount,
         notes,
         phoneNumber,
-        status:'pendiente'
+        status:'pendiente',
+        codigoClinte
       });
+
+
   
       res.status(201).json(debt);
     } catch (error) {
@@ -53,15 +56,16 @@ const createLoan = async (req, res, next) => {
 
   const getLoansByCustomer = async (req, res, next) => {
     try {
-      const { customerId } = req.params;
+      const  loanId  = req.body;
   
-      const loans = await LoanClient.findAll({
-        where: { customerId }
+      const loans = await PaymentClient.findAll({
+        where:  loanId 
       });
   
       res.status(200).json(loans);
     } catch (error) {
       res.status(500).json({ message: 'Error al obtener los préstamos del Cliente' });
+      console.log(error)
     }
   };
 

@@ -65,10 +65,10 @@ const getAllLoan = async (req, res, next) => {
 
 const getLoansBySeller = async (req, res, next) => {
   try {
-    const { sellerId } = req.params;
+    const loanId = req.body;
 
-    const loans = await Loan.findAll({
-      where: { sellerId }
+    const loans = await Payment.findAll({
+      where: loanId 
     });
 
     res.status(200).json(loans);
