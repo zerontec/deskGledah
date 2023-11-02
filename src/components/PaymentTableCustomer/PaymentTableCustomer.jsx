@@ -206,77 +206,7 @@ const PaymentTableCustomer = ({ loanId, openAbonoClientModal, handleCloseAbonoCl
 
   return (
     <>
-      <Box sx={{ m: 2 }}>
-        <Typography variant="h5" component="h3">
-          Abonos Realizados Clientes
-        </Typography>
-
-        <TextField label="Buscar Abonos" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-        {fetchError ? (
-          <p>Hubo un problema al cargar los datos de cuentas por pagar.</p>
-        ) : (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead>
-              <TableRow>
-                {' '}
-                {columns.map((column) => (
-                  <TableCell key={column.id} align="left" minWidth={column.minWidth}>
-                    {' '}
-                    {column.label}{' '}
-                  </TableCell>
-                ))}{' '}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {' '}
-              {Array.isArray(pagos?.paymentsCustomer) && pagos?.paymentsCustomer?.length > 0 ? (
-                pagos?.paymentsCustomer
-                  //   .filter((item) =>
-                  //     item.customer?.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  //   )
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((item) => (
-                    <TableRow key={item.loanId}>
-                      <TableCell align="left">{item?.loanId}</TableCell>
-                      <TableCell align="left">{item?.amount}</TableCell>
-                      <TableCell align="left">{fDateTime(item?.createdAt)}</TableCell>
-                      {/* <TableCell align="left">{item.customer?.name}</TableCell>
-				<TableCell align="left">{item.customer?.identification}</TableCell> */}
-
-                      {/* ... */}
-                      <>
-                        {/* <TableCell className="tableCell">
-                        <Button
-                          variant="contained"
-                          onClick={() => setSelectedAbono(item)}
-                        >
-                          Ver
-                        </Button>
-                      </TableCell> */}
-                      </>
-                    </TableRow>
-                  ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6}>No hay datos disponibles</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 100]}
-            component="div"
-            count={Array.isArray(pagos?.paymentsCustomer) ? pagos.paymentsCustomer.length : 0}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </TableContainer>
-        )}
-      </Box>
-
+     
       <Modal open={openAbonoClientModal} onClose={handleCloseAbonoClientModal}>
         <Box
           sx={{

@@ -83,9 +83,9 @@ const columns = [
 ];
 
 const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(100);
-  const [searchTerm, setSearchTerm] = useState('');
+  // const [page, setPage] = useState(0);
+  // const [rowsPerPage, setRowsPerPage] = useState(100);
+  // const [searchTerm, setSearchTerm] = useState('');
 
   const dispatch = useDispatch();
   const [abono, setAbono] = useState([]);
@@ -117,14 +117,14 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
         setFetchError(error);
       });
   }, [dispatch]);
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
   const [formInfo, setFormInfo] = useState({
     amount: '',
@@ -198,7 +198,7 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
 
   return (
     <>
-      <Box sx={{ m: 2 }}>
+      {/* <Box sx={{ m: 2 }}>
         <Typography variant="h5" component="h3">
           Abonos Realizados Empleados
         </Typography>
@@ -235,7 +235,7 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
                       <TableCell align="left">{item.seller?.codigo}</TableCell>
 
                       {/* ... */}
-                      <>
+                      {/*  */}
                         {/* <TableCell className="tableCell">
                         <Button
                           variant="contained"
@@ -244,7 +244,7 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
                           Ver
                         </Button>
                       </TableCell> */}
-                      </>
+                      {/* </>
                     </TableRow>
                   ))
               ) : (
@@ -264,8 +264,8 @@ const PaymentTable = ({ loanId, openAbonoModal, handleCloseAbonoModal }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
-        )}
-      </Box>
+        )} */}
+      {/* </Box> */} 
 
       <Modal open={openAbonoModal} onClose={handleCloseAbonoModal}>
         <Box
