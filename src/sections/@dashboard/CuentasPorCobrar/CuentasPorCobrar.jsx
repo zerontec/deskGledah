@@ -251,7 +251,7 @@ const CuentasPorCobrar = () => {
   return (
     <>
     <hr/>
-      {/* Modal Ver Analysis */}
+      {/* Modal Ver cuenta */}
       <Modal open={selectedCuenta !== null} onClose={() => setSelectedCuenta(null)}>
         <Box
           sx={{
@@ -310,7 +310,7 @@ const CuentasPorCobrar = () => {
           )}
         </Box>
       </Modal>
-      {/* End Modal nalysis  */}
+      {/* End Modal cuenta   */}
       {/* Modal Ver Cliente */}
 
       <Modal open={selectedCliente !== null} onClose={() => setSelectedCliente(null)}>
@@ -347,7 +347,7 @@ const CuentasPorCobrar = () => {
         </Box>
       </Modal>
 
-      {/* Modal para editar el análisis */}
+      {/* Modal para editar cuenta */}
       <Modal open={open} onClose={handleCloseModal}>
         <Box
           sx={{
