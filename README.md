@@ -138,7 +138,7 @@ Install the dependencies in both the backend and fronted folders
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+
 
 1.Demo [https://www.devsign.lat/login](https://www.devsign.lat/login)
 
