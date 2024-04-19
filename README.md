@@ -150,7 +150,7 @@ Install the dependencies in both the backend and fronted folders
    ```sh
    npm install
    ```
-4.You should have Postgrest installed
+4.You should have Postgrest installed and create db gledah
    ```
    https://www.postgresql.org/download/
    ```
